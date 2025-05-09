@@ -1,9 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import apiClient from '../axiosConfig';
 import { Button, DatePicker, FileUpload, InputText, Select } from 'primevue';
+import { format } from 'date-fns';
 
 export default defineComponent({
     name: "AddExamFile",
@@ -17,7 +18,7 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const router = useRouter();
-        const date = ref<string>(new Date().toISOString().split('T')[0]);
+        const date = ref<Date>(new Date()); // Keep as Date object
         const examType = ref<string>('');
         const file = ref<File | null>(null);
         const errorMessage = ref<string | null>(null);
@@ -28,6 +29,11 @@ export default defineComponent({
             { label: 'Exame de Urina', value: 'urina' },
             { label: 'Teste do Pézinho', value: 'imagem' },
         ]);
+
+        // Format the date for display (dd/mm/yyyy)
+        const formattedDate = computed(() => {
+            return format(date.value, 'dd/MM/yyyy');
+        });
 
         const handleFileUpload = (event: any) => {
             file.value = event.files[0];
@@ -56,9 +62,10 @@ export default defineComponent({
             try {
                 const base64File = await convertFileToBase64(file.value);
 
+                // Send the date as a Date object (or format it for the API if needed)
                 const response = await apiClient.put('/examFile', {
                     id: new Number(localStorage.getItem("selectedExamId")),
-                    exam_date: date.value,
+                    exam_date: date.value.toISOString().split('T')[0], // Format for API if needed
                     type: examType.value,
                     file: base64File
                 }, {
@@ -98,6 +105,7 @@ export default defineComponent({
             date,
             examType,
             examTypes,
+            formattedDate, // Add formattedDate to the template
             handleFileUpload,
             handleSubmit,
             handleCancel,
@@ -109,24 +117,25 @@ export default defineComponent({
 
 <template>
     <Toast position="top-left" />
-        <nav class="navbar">
+    <nav class="navbar">
         <a @click="goToHome">
             <img
-            src="../assets/logo-unidade.jpg"
-            alt="Logo da unidade genética com um cromossomo desenhado"
-            class="logo"
+                src="../assets/logo-unidade.jpg"
+                alt="Logo da unidade genética com um cromossomo desenhado"
+                class="logo"
             />
         </a>
-        <span
-            ><ion-icon name="person-circle-outline" class="user-profile"></ion-icon
-        ></span>
-        </nav>
+        <span>
+            <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
+        </span>
+    </nav>
     <div class="container">
         <h2>Inserção dos Exames</h2>
         <form @submit.prevent="handleSubmit">
             <div class="p-field">
                 <label for="data">Data:</label>
                 <DatePicker id="data" v-model="date" dateFormat="dd/mm/yy" required />
+                <p>Data selecionada: {{ formattedDate }}</p>
             </div>
 
             <div class="p-field">
