@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require('../config/Database');
+const moment = require('moment-timezone');
 
 class Exam extends Model { }
 
@@ -11,33 +12,44 @@ Exam.init({
         autoIncrement: true
     },
     type: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false
     },
-    patient_document: {
-        type: DataTypes.STRING,
+    patientDocument: {
+        type: DataTypes.STRING(11),
         allowNull: false,
         references: {
-            model: "user",
+            model: "patient",
             key: "document"
         }
     },
-    doctor_document: {
-        type: DataTypes.STRING,
+    doctorDocument: {
+        type: DataTypes.STRING(11),
         allowNull: false,
         references: {
-            model: "user",
+            model: "worker",
             key: "document"
         }
     },
-    exam_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
+    registrationDate: {
+        type: DataTypes.DATE,
+        get() {
+            const rawValue = this.getDataValue('registrationDate');
+            return rawValue ? moment(rawValue).tz('America/Sao_Paulo').format() : null;
+        },
+        set(value) {
+            if (value) {
+                this.setDataValue('registrationDate', new Date(value));
+            } else {
+                this.setDataValue('registrationDate', null);
+            }
+        },
+        allowNull: false,
     },
-    file: {
+    resultFile: {
         type: DataTypes.TEXT,
         allowNull: true
     }
-}, { sequelize, modelName: "exam", tableName: "exam" });
+}, { sequelize, modelName: "exam", tableName: "exam", timestamps: false });
 
 module.exports = Exam;

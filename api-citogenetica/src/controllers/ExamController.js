@@ -1,11 +1,11 @@
-const Exam = require("../models/Exam");
+const Exam = require("../models/Exam.js");
 
 class ExamController {
     static async ListExamsByDoctorDocument(req, res) {
         try {
             const exams = await Exam.findAll({
-                where: { doctor_document: req.user.document },
-                attributes: ['id', 'patient_document', 'exam_date', 'file']
+                where: { doctorDocument: req.user.document },
+                attributes: ['id', 'patientDocument', 'registrationDate', 'resultFile']
             });
 
             res.status(200).json(exams);
@@ -18,7 +18,7 @@ class ExamController {
     static async ListAllExams(req, res) {
         try {
             const exams = await Exam.findAll({
-                attributes: ['id', 'patient_document', 'exam_date', 'file']
+                attributes: ['id', 'patientDocument', 'registrationDate', 'resultFile']
             });
 
             res.status(200).json(exams);
@@ -31,8 +31,8 @@ class ExamController {
     static async GetExamsByPatientDocument(req, res) {
         try {
             const exams = await Exam.findAll({
-                where: { patient_document: req.user.document },
-                attributes: ['id', 'patient_document', 'exam_date', 'file']
+                where: { patientDocument: req.user.document },
+                attributes: ['id', 'patientDocument', 'registrationDate', 'resultFile']
             });
 
             res.status(200).json(exams);
@@ -44,13 +44,13 @@ class ExamController {
 
     static async AddExam(req, res) {
         try {
-            const { type, subtype, doctor_document, patient_document, exam_date } = req.body;
+            const { type, subtype, doctorDocument, patientDocument, registrationDate } = req.body;
 
-            if (!type || !subtype || !doctor_document || !patient_document || !exam_date) {
+            if (!type || !subtype || !doctorDocument || !patientDocument || !registrationDate) {
                 return res.status(400).json({ message: 'Todas as informações são necessárias' });
             }
 
-            const newExam = await Exam.create({ type, subtype, doctor_document, patient_document, exam_date });
+            const newExam = await Exam.create({ type, subtype, doctorDocument, patientDocument, registrationDate });
 
             res.status(201).json({ message: "Exame registrado com sucesso!", exam: newExam });
         } catch (error) {
@@ -65,8 +65,8 @@ class ExamController {
             const exam = await Exam.findOne({ where: { id } });
 
             if (exam) {
-                exam.file = file;
-                exam.exam_date = exam_date;
+                exam.resultFile = file;
+                exam.registrationDate = exam_date;
                 exam.type = type;
                 await exam.save();
                 res.status(200).json({ message: 'Resultado adicionado ao exame com sucesso!' });

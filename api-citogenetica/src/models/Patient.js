@@ -1,14 +1,15 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require('../config/Database');
 const bcrypt = require('bcryptjs');
+const moment = require('moment-timezone');
 
-class User extends Model {
+class Patient extends Model {
     async validatePassword(password) {
         return await bcrypt.compare(password, this.password);
     }
 }
 
-User.init({
+Patient.init({
     completeName: {
         type: DataTypes.STRING,
         allowNull: false
@@ -27,19 +28,20 @@ User.init({
         allowNull: false,
         primaryKey: true
     },
-    type: {
-        type: DataTypes.INTEGER,
+    registrationDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        get() {
+            const rawValue = this.getDataValue('registrationDate');
+            return rawValue ? moment(rawValue).tz('America/Sao_Paulo').format() : null;
+        },
         allowNull: false,
-        references: {
-            model: "user_type",
-            key: "key"
-        }
-    }
-}, { sequelize, modelName: "user", tableName: "user" });
+    },
+}, { sequelize, modelName: "patient", tableName: "patient", timestamps: false });
 
-User.beforeCreate(async (user) => {
-    const hash = await bcrypt.hash(user.password, 10);
-    user.password = hash;
+Patient.beforeCreate(async (patient) => {
+    const hash = await bcrypt.hash(patient.password, 10);
+    patient.password = hash;
 });
 
-module.exports = User;
+module.exports = Patient;
