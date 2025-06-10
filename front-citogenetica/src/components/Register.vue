@@ -33,19 +33,10 @@ export default defineComponent({
     const password = ref<string>("");
     const confirmPassword = ref<string>("");
     const errorMessage = ref<string>("");
-    const userType = 1;
-
-    const formatDocument = (document: string): string => {
-      return document
-        .replace(/\D/g, "")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    };
 
     const register = async () => {
       try {
-        if (password !== confirmPassword) {
+        if (password.value !== confirmPassword.value) {
           toast.add({
             severity: "error",
             summary: "Error",
@@ -54,17 +45,14 @@ export default defineComponent({
           return;
         }
 
-        const formatedDocument = formatDocument(document.toString());
-
         const payload = {
-          completeName,
-          email,
-          formatedDocument,
-          password,
-          userType,
+          completeName: completeName.value,
+          password: password.value,
+          email: email.value,
+          document: document.value
         };
 
-        const response = await apiClient.post("/auth/register", { payload });
+        const response = await apiClient.post("/patient/register", payload );
 
         const token = response.data.token;
         localStorage.setItem("token", token);
@@ -150,7 +138,7 @@ export default defineComponent({
   
           <FloatLabel variant="on">
             <InputText
-              v-tooltip="'Insira seu CPF'"
+              v-tooltip="'Insira seu CPF (Somente números)'"
               id="document"
               v-model="document"
               type="text"
@@ -214,7 +202,7 @@ export default defineComponent({
         rounded
       />
       <img
-        src="../assets/undraw_Mobile_development_re_wwsn.png"
+        src="../assets/cadastro.png"
         alt="Mulher sentada em frente a um celular"
         id="imagem-registro"
       />

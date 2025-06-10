@@ -1,25 +1,7 @@
-const jwt = require('jsonwebtoken');
 const Worker = require('../models/Worker');
-const secretKey = process.env.JWT_SECRET;
+const { generateToken } = require('../services');
 
 class WorkerController {
-    static generateToken(payload) {
-        const { document, type, expiresIn } = payload;
-
-        if (!document || !type || !expiresIn) {
-            throw new Error('Missing information for token generation!');
-        }
-
-        if (!secretKey) {
-            throw new Error('JWT secret key is not defined!');
-        }
-
-        return jwt.sign(
-            { document, type },
-            secretKey,
-            { expiresIn }
-        );
-    }
 
     static async Register(req, res) {
         try {
@@ -31,7 +13,7 @@ class WorkerController {
             }
 
             const newWorker = await Worker.create({ completeName, password, email, document, position, salary });
-            const token = WorkerController.generateToken({ document: newWorker.document, type: position, expiresIn: '1h' });
+            const token = generateToken({ document: newWorker.document, type: position, expiresIn: '1h' });
 
             res.status(201).json({ message: 'Trabalhador registrado com sucesso!', token });
         } catch (error) {
@@ -56,7 +38,7 @@ class WorkerController {
                 return res.status(401).json({ message: 'Credenciais inválidas!' });
             }
 
-            const token = WorkerController.generateToken({ document: worker.document, type: worker.position, expiresIn: '1h' });
+            const token = generateToken({ document: worker.document, type: worker.position, expiresIn: '1h' });
             res.status(200).json({ message: 'Login feito com sucesso!', token });
         } catch (error) {
             console.error('Erro durante login do trabalhador:', error);

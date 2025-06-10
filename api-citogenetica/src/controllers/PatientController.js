@@ -1,37 +1,18 @@
-const jwt = require('jsonwebtoken');
 const Patient = require('../models/Patient');
-const secretKey = process.env.JWT_SECRET;
+const { generateToken } = require('../services');
 
 class PatientController {
-    static generateToken(payload) {
-        const { document, type, expiresIn } = payload;
-
-        if (!document || !type || !expiresIn) {
-            throw new Error('Missing information for token generation!');
-        }
-
-        if (!secretKey) {
-            throw new Error('JWT secret key is not defined!');
-        }
-
-        return jwt.sign(
-            { document, type },
-            secretKey,
-            { expiresIn }
-        );
-    }
-
     static async Register(req, res) {
         try {
             const { completeName, password, email, document } = req.body;
-
+            console.log('Dados recebidos para registro de paciente:', { completeName, password, email, document });
             const existingPatient = await Patient.findOne({ where: { document } });
             if (existingPatient) {
                 return res.status(400).json({ message: 'Paciente com esse CPF já existe!' });
             }
 
             const newPatient = await Patient.create({ completeName, password, email, document });
-            const token = PatientController.generateToken({ document: newPatient.document, type: 'patient', expiresIn: '1h' });
+            const token = generateToken({ document: newPatient.document, type: 'patient', expiresIn: '1h' });
 
             res.status(201).json({ message: 'Paciente registrado com sucesso!', token });
         } catch (error) {
@@ -56,7 +37,7 @@ class PatientController {
                 return res.status(401).json({ message: 'Credenciais inválidas!' });
             }
 
-            const token = PatientController.generateToken({ document: patient.document, type: 'patient', expiresIn: '1h' });
+            const token = generateToken({ document: patient.document, type: 'patient', expiresIn: '1h' });
             res.status(200).json({ message: 'Login feito com sucesso!', token });
         } catch (error) {
             console.error('Erro durante o login:', error);

@@ -231,30 +231,6 @@ export default defineComponent({
   text-decoration: none;
 }
 
-footer {
-  display: flex;
-  background-color: #0062ae;
-  padding: 10px;
-  height: 40px;
-  justify-content: center;
-  align-items: center;
-}
-
-footer p {
-  text-align: center;
-  color: #fff;
-  font-size: 1.2rem;
-}
-
-footer a {
-  color: #fff;
-  text-decoration: none;
-}
-
-footer a:hover {
-  color: #ffed00;
-}
-
 @media (max-width: 1024px) {
   #container-resultado {
     width: 100%;

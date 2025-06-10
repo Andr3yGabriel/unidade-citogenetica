@@ -5,10 +5,11 @@ import apiClient from "../axiosConfig";
 import { Button, FloatLabel, InputText, Password, Toast, useToast } from "primevue";
 import router from "../router/router";
 import 'primeicons/primeicons.css';
-
+import { jwtDecode } from "jwt-decode";
+import type CustomJwtPayload from "../interfaces/CustomJwtPayload";
 
 export default defineComponent({
-  name: "Login",
+  name: "WorkerLogin",
   components: {
     Toast,
     Button,
@@ -25,13 +26,16 @@ export default defineComponent({
 
     const login = async () => {
       try {
-        const response = await apiClient.post("/patient/login", {
+        const response = await apiClient.post("/worker/login", {
           document: document.value,
           password: password.value,
         });
 
         const token = response.data.token;
         localStorage.setItem("token", token);
+
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        localStorage.setItem("userType", decodedToken.type.toString());
 
         goToList();
       } catch (error) {
@@ -54,10 +58,6 @@ export default defineComponent({
       }
     };
 
-    const goToRegister = () => {
-      router.push("Register")
-    };
-
     const goToForget = () => {
       router.push("Forget")
     }
@@ -67,11 +67,16 @@ export default defineComponent({
     };
 
     const goToList = () => {
-      router.push("PatientList");
+      const userType = localStorage.getItem("userType");
+      if (userType === "doctor") {
+        router.push("DoctorList");
+      } else if (userType === "technical" || userType === "admin") {
+        router.push("AllExamsList");
+      }
     };
 
-    const goToWorkerLogin = () => {
-      router.push("WorkerLogin");
+    const goToPatientLogin = () => {
+      router.push("Login");
     };
 
     return {
@@ -79,10 +84,9 @@ export default defineComponent({
       password,
       login,
       goToHome,
-      goToRegister,
       goToForget,
       errorMessage,
-      goToWorkerLogin
+      goToPatientLogin
     };
   },
 });
@@ -115,9 +119,8 @@ export default defineComponent({
         </FloatLabel>
 
         <div class="link-login">
-          <a class="a-login" @click="goToRegister">Cadastre-se</a>
           <a class="a-login disabled" @click="goToForget">Esqueci minha senha</a>
-          <a class="a-login" @click="goToWorkerLogin">Sou funcionário</a>
+          <a class="a-login" @click="goToPatientLogin">Sou paciente</a>
         </div>
 
         <Button @Click="login" label="Entrar" severity="secondary" rounded />

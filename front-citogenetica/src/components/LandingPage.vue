@@ -649,30 +649,6 @@ li {
   }
 }
 
-footer {
-  display: flex;
-  background-color: #0062ae;
-  padding: 10px;
-  height: 40px;
-  justify-content: center;
-  align-items: center;
-
-  p {
-    text-align: center;
-    color: #fff;
-    font-size: 1.2rem;
-  }
-
-  a {
-    color: #fff;
-    text-decoration: none;
-
-    &:hover {
-      color: #ffed00;
-    }
-  }
-}
-
 @media (max-width: 1024px) {
   #header-home {
     flex-direction: column;

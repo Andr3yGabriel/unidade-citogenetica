@@ -199,46 +199,12 @@ export default defineComponent({
   justify-content: center;
   flex-direction: column;
   margin: 10px 0px;
-}
 
-#box-situacao .titulo {
-  color: #6e6e6e;
-  font-weight: 300;
-  font-size: 2.5rem;
-}
-
-#box-interacao {
-  display: flex;
-  justify-content: left;
-  align-items: flex-start;
-  flex-direction: column;
-  width: fit-content;
-  background-color: #fff;
-  width: 61%;
-  margin: 15px 0px 30px 0px;
-}
-
-#bt-add-exame {
-  background-color: #e2e2e2;
-  width: 150px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0px 2px lightgray;
-  margin: 10px 0px;
-}
-
-#add-box {
-  color: #f2f2f2;
-  background-color: #aaaaaa;
-  margin-right: 10px;
-}
-
-#bt-add-exame p {
-  color: #333333;
-  opacity: 0.81;
+  .titulo {
+    color: #6e6e6e;
+    font-weight: 300;
+    font-size: 2.5rem;
+  }
 }
 
 .sem-exames {
@@ -296,33 +262,6 @@ export default defineComponent({
   font-style: normal;
   text-decoration: none;
   color: #000;
-}
-
-footer {
-  display: flex;
-  position: fixed;
-  bottom: 0px;
-  background-color: #0062ae;
-  padding: 10px;
-  width: 100%;
-  height: 40px;
-  justify-content: center;
-  align-items: center;
-}
-
-footer p {
-  text-align: center;
-  color: #fff;
-  font-size: 1.2rem;
-}
-
-footer a {
-  color: #fff;
-  text-decoration: none;
-}
-
-footer a:hover {
-  color: #ffed00;
 }
 
 @media (max-width: 1024px) {

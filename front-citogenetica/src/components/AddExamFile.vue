@@ -218,31 +218,4 @@ form {
     gap: 20px;
     margin-top: 20px;
 }
-
-footer {
-    display: flex;
-    position: fixed;
-    bottom: 0px;
-    background-color: #0062ae;
-    padding: 10px;
-    width: 100%;
-    height: 40px;
-    justify-content: center;
-    align-items: center;
-}
-
-footer p {
-    text-align: center;
-    color: #fff;
-    font-size: 1.2rem;
-}
-
-footer a {
-    color: #fff;
-    text-decoration: none;
-}
-
-footer a:hover {
-    color: #ffed00;
-}
 </style>
