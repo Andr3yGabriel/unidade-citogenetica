@@ -15,11 +15,11 @@ Worker.init({
         primaryKey: true
     },
     completeName: {
-        type: DataTypes.STRING(70),
+        type: DataTypes.STRING,
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
     },
