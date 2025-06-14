@@ -21,6 +21,30 @@ class PatientController {
         }
     }
 
+    static async GetPatientInfo(req, res) {
+        try {
+            const { document } = req.query;
+
+            if (!document) {
+                return res.status(400).json({ message: 'O parâmetro "document" é obrigatório.' });
+            }
+
+            const patient = await Patient.findOne({
+                where: { document: document },
+                attributes: ['completeName', 'email', 'document']
+            });
+
+            if (!patient) {
+                return res.status(404).json({ message: 'Paciente não encontrado!' });
+            }
+
+            res.status(200).json(patient.completeName);
+        } catch (error) {
+            console.error('Erro ao obter informações do paciente:', error);
+            res.status(500).json({ message: 'Erro inesperado ao obter informações do paciente!' });
+        }
+    }
+
     static async Login(req, res) {
         try {
             const { document, password } = req.body;

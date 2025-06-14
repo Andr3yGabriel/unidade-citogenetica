@@ -44,13 +44,13 @@ class ExamController {
 
     static async AddExam(req, res) {
         try {
-            const { type, subtype, doctorDocument, patientDocument, registrationDate } = req.body;
+            const { type, subtype, doctorDocument, patientDocument } = req.body;
 
-            if (!type || !subtype || !doctorDocument || !patientDocument || !registrationDate) {
+            if (!type || !subtype || !doctorDocument || !patientDocument) {
                 return res.status(400).json({ message: 'Todas as informações são necessárias' });
             }
 
-            const newExam = await Exam.create({ type, subtype, doctorDocument, patientDocument, registrationDate });
+            const newExam = await Exam.create({ type, subtype, doctorDocument, patientDocument });
 
             res.status(201).json({ message: "Exame registrado com sucesso!", exam: newExam });
         } catch (error) {
@@ -83,7 +83,7 @@ class ExamController {
             const exam = await Exam.findOne({ where: { id } });
 
             if (exam) {
-                res.status(200).json(exam.file);
+                res.status(200).json(exam.resultFile);
             }
         } catch (error) {
             console.error("Erro ao buscar o resultado do exame: ", error);

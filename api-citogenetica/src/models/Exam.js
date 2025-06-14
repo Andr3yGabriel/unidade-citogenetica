@@ -33,6 +33,7 @@ Exam.init({
     },
     registrationDate: {
         type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
         get() {
             const rawValue = this.getDataValue('registrationDate');
             return rawValue ? moment(rawValue).tz('America/Sao_Paulo').format() : null;

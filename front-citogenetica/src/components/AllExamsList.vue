@@ -6,7 +6,7 @@ import type { Exam } from '../interfaces/Exam';
 import router from '../router/router';
 
 export default defineComponent({
-    name: "DoctorList",
+    name: "AllExamsList",
     components: {
         Button,
         Toast
@@ -30,7 +30,7 @@ export default defineComponent({
                 return;
             }
               try {
-                  const response = await apiClient.get('/exam/doctor', {
+                  const response = await apiClient.get('/exams', {
                       headers: {
                           Authorization: `Bearer ${token}`
                       }
@@ -94,7 +94,7 @@ export default defineComponent({
 
         const handleExamClick = (examId: string, status: string) => {
             localStorage.setItem("selectedExamId", examId);
-            if (userType === "3" && status === "NO LABORATÓRIO") {
+            if (userType === "technical" && status === "NO LABORATÓRIO") {
                 router.push("AddExamFile");
             } else {
                 router.push("Result");
@@ -131,13 +131,6 @@ export default defineComponent({
     </nav>
     <main id="box-situacao">
       <h1 class="titulo">Situação de Exames</h1>
-
-      <section id="box-interacao">
-        <span id="bt-add-exame">
-          <ion-icon name="add-outline" id="add-box"></ion-icon>
-          <p>Novo Exame</p>
-        </span>
-      </section>
 
       <section id="tabela-pacientes">
         <div v-if="exams.length < 1" class="sem-exames">

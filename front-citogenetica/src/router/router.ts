@@ -7,6 +7,7 @@ import AddExamFile from "../components/AddExamFile.vue";
 import Result from "../components/Result.vue";
 import PatientList from "../components/PatientList.vue";
 import WorkerLogin from "../components/WorkerLogin.vue";
+import AllExamsList from "../components/AllExamsList.vue";
 
 const routes = [
     {
@@ -48,6 +49,11 @@ const routes = [
         path: '/PatientList',
         name: 'PatientList',
         component: PatientList
+    },
+    {
+        path: '/AllExamsList',
+        name: 'AllExamsList',
+        component: AllExamsList
     }
 ];
 

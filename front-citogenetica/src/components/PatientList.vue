@@ -18,11 +18,6 @@ export default defineComponent({
     const errorMessage = ref<string | null>(null);
     const userType = localStorage.getItem("userType");
 
-    const formatDateToBrazilianPattern = (date: Date | string): string => {
-      const dateObj = typeof date === "string" ? new Date(date) : date;
-      return dateObj.toLocaleDateString("pt-BR");
-    };
-
     const fetchExams = async () => {
       if (token === "") {
         errorMessage.value = "Sessão expirada!";
@@ -44,15 +39,14 @@ export default defineComponent({
         exams.value = await Promise.all(
           response.data.map(async (exam: Exam) => ({
             id: exam.id,
-            patient_document: exam.patient_document,
-            exam_date: formatDateToBrazilianPattern(exam.exam_date),
-            file: exam.file,
-            status: exam.file ? "PRONTO" : "NO LABORATÓRIO",
-            patient_name: await findUserName(exam.patient_document),
+            patient_document: exam.patientDocument,
+            registrationDate: new Date(exam.registrationDate).toLocaleDateString("pt-BR"),
+            resultFile: exam.resultFile,
+            status: exam.resultFile ? "PRONTO" : "NO LABORATÓRIO",
+            patient_name: await findUserName(exam.patientDocument),
           }))
         );
 
-        console.log(exams);
       } catch (error) {
         console.error("Erro ao listar exames: ", error);
         errorMessage.value = "Erro ao listar exames!";
@@ -65,35 +59,35 @@ export default defineComponent({
     };
 
     const findUserName = async (patient_document: string) => {
-      if (token === "") {
-        errorMessage.value = "Sessão expirada!";
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: errorMessage,
-        });
-        router.push("Login");
-        return;
-      }
+            if (token === "") {
+                errorMessage.value = "Sessão expirada!";
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: errorMessage
+                });
+                router.push("Login");
+                return;
+            }
 
-      try {
-        const response = await apiClient.get(`/pacient/${patient_document}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+            try {
+              const response = await apiClient.get(`/patient?document=${patient_document}`, {
+                  headers: {
+                      Authorization: `Bearer ${token}`
+                  }
+              });
 
-        return response.data;
-      } catch (error) {
-        console.error("Erro ao buscar usuário: ", error);
-        errorMessage.value = "Erro ao buscar usuário!";
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: errorMessage,
-        });
-      }
-    };
+                return response.data
+            } catch (error) {
+                console.error("Erro ao buscar usuário: ", error);
+                errorMessage.value = "Erro ao buscar usuário!";
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: errorMessage
+                });
+            }
+        }
 
     onMounted(() => {
       fetchExams();
@@ -101,9 +95,9 @@ export default defineComponent({
 
     const handleExamClick = (examId: string, status: string) => {
       localStorage.setItem("selectedExamId", examId);
-      if (userType === "3" && status === "NO LABORATÓRIO") {
-        router.push("AddExamFile");
-      } else {
+      console.log("Exam ID:", examId);
+      if (userType === "patient" && status === "PRONTO") {
+        console.log("Redirecting to Result page");
         router.push("Result");
       }
     };
@@ -149,10 +143,11 @@ export default defineComponent({
           :key="exam.id"
           class="card-lab"
           :class="{ 'card-pronto': exam.status === 'PRONTO' }"
+          @click="handleExamClick(exam.id.toString(), exam.status)"
         >
           <span class="info-paciente">
             <p>{{ exam.patient_name }}</p>
-            <p>{{ exam.exam_date }}</p>
+            <p>{{ exam.registrationDate }}</p>
           </span>
           <span class="status">
             <p>{{ exam.status }}</p>

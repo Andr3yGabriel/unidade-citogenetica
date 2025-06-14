@@ -80,7 +80,7 @@ export default defineComponent({
                         summary: "Sucesso",
                         detail: "Exame enviado com sucesso!"
                     });
-                    router.push("DoctorList");
+                    router.push("AllExamsList");
                 }
             } catch (error) {
                 console.error("Erro ao enviar exame: ", error);
@@ -94,7 +94,7 @@ export default defineComponent({
         };
 
         const handleCancel = () => {
-            router.push("DoctorList");
+            router.push("AllExamsList");
         };
 
         const goToHome = () => {
@@ -189,6 +189,7 @@ export default defineComponent({
 .container {
     margin: auto;
     padding: 20px;
+    width: 60%;
 }
 
 h2 {
@@ -202,7 +203,8 @@ form {
     background: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    border: 2px solid #AEAEAE;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .p-field {

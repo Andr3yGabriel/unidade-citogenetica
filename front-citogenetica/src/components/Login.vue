@@ -5,6 +5,8 @@ import apiClient from "../axiosConfig";
 import { Button, FloatLabel, InputText, Password, Toast, useToast } from "primevue";
 import router from "../router/router";
 import 'primeicons/primeicons.css';
+import { jwtDecode } from "jwt-decode";
+import type CustomJwtPayload from "../interfaces/CustomJwtPayload";
 
 
 export default defineComponent({
@@ -32,6 +34,9 @@ export default defineComponent({
 
         const token = response.data.token;
         localStorage.setItem("token", token);
+
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        localStorage.setItem("userType", decodedToken.type.toString());
 
         goToList();
       } catch (error) {

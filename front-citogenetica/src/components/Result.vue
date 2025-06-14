@@ -87,7 +87,14 @@ export default defineComponent({
         };
 
         const back = () => {
-            router.push("DoctorList");
+            const userType = localStorage.getItem("userType");
+            if (userType === "doctor") {
+                router.push("DoctorList");
+            } else if (userType === "technical" || userType === "admin") {
+                router.push("AllExamsList");
+            } else if (userType === "patient") {
+                router.push("PatientList");
+            }
         }
 
         // Fetch the exam result when the component mounts
