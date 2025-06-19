@@ -1,10 +1,8 @@
 const Exam = require("./Exam");
-const Patient = require("./Patient");
-const Worker = require("./Worker")
+const User = require("./User");
 
+User.hasMany(Exam, { foreignKey: 'patientDocument', as: 'PatientExams' });
+Exam.belongsTo(User, { foreignKey: 'patientDocument', as: 'Patient' });
 
-Patient.hasMany(Exam, { foreignKey: 'patientDocument', as: 'PatientExams' });
-Exam.belongsTo(Patient, { foreignKey: 'patientDocument', as: 'Patient' });
-
-Worker.hasMany(Exam, { foreignKey: 'doctorDocument', as: 'DoctorExams' });
-Exam.belongsTo(Worker, { foreignKey: 'doctorDocument', as: 'Doctor' });
+User.hasMany(Exam, { foreignKey: 'doctorDocument', as: 'DoctorExams' });
+Exam.belongsTo(User, { foreignKey: 'doctorDocument', as: 'Doctor' });
