@@ -1,56 +1,51 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require('../config/Database');
-const moment = require('moment-timezone');
 
 class Exam extends Model { }
 
 Exam.init({
     id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
-    type: {
-        type: DataTypes.STRING(20),
+    patientId: {
+        field: "id_paciente",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    requestingDoctorId: {
+        field: "id_medico_solicitante",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    responsibleTechnicianId: {
+        field: "id_tecnico_responsavel",
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    examTypeId: {
+        field: "id_tipo_exame",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    examStatusId: {
+        field: "id_status_exame",
+        type: DataTypes.INTEGER,
         allowNull: false
     },
-    patientDocument: {
-        type: DataTypes.STRING(11),
-        allowNull: false,
-        references: {
-            model: "patient",
-            key: "document"
-        }
-    },
-    doctorDocument: {
-        type: DataTypes.STRING(11),
-        allowNull: false,
-        references: {
-            model: "worker",
-            key: "document"
-        }
-    },
-    registrationDate: {
+    conclusionDate: {
+        field: "data_conclusao",
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        get() {
-            const rawValue = this.getDataValue('registrationDate');
-            return rawValue ? moment(rawValue).tz('America/Sao_Paulo').format() : null;
-        },
-        set(value) {
-            if (value) {
-                this.setDataValue('registrationDate', new Date(value));
-            } else {
-                this.setDataValue('registrationDate', null);
-            }
-        },
-        allowNull: false,
+        allowNull: true,
     },
-    resultFile: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    }
-}, { sequelize, modelName: "exam", tableName: "exam", timestamps: false });
+}, {
+    sequelize,
+    modelName: "Exam",
+    tableName: "exames",
+    timestamps: true,
+    createdAt: 'data_solicitacao',
+    updatedAt: 'data_atualizacao',
+});
 
 module.exports = Exam;

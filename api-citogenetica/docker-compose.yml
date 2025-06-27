@@ -8,9 +8,11 @@ services:
     environment:
       - DATABASE_URL=${DB_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - UPLOAD_PATH=uploads
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+      - laudos_data:/usr/src/app/uploads
     depends_on:
       - authdb
 
@@ -27,3 +29,4 @@ services:
 
 volumes:
   db_data:
+  laudos_data:

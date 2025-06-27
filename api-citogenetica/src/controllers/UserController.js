@@ -1,99 +1,30 @@
-const User = require('../models/User');
-const { generateToken } = require('../services');
+const { User } = require('../models');
+const { sendPasswordChangedEmail } = require('../services/EmailService');
 
 class UserController {
-    static async PatientRegister(req, res) {
+    /**
+     * Atualiza a senha de um usuário LOGADO. Rota protegida para todos os tipos.
+     */
+    static async updatePassword(req, res) {
         try {
-            const { completeName, password, email, document } = req.body;
-            const existingUser = await User.findOne({ where: { document } });
+            const { oldPassword, newPassword } = req.body;
+            const userId = req.user.userId; // ID do usuário logado, vindo do token.
 
-            if (existingUser) {
-                return res.status(400).json({ message: 'Usuário com esse CPF já existe!' });
-            }
+            const user = await User.findByPk(userId);
+            if (!user) return res.status(404).json({ message: 'Usuário não encontrado.' });
 
-            const newUser = await User.create({ completeName, password, email, document, type: 'patient' });
-            const token = generateToken({ document: newUser.document, type: newUser.type, expiresIn: '1h' });
+            const isPasswordValid = await user.validatePassword(oldPassword);
+            if (!isPasswordValid) return res.status(401).json({ message: 'A senha antiga está incorreta.' });
 
-            res.status(201).json({ message: 'Usuário registrado com sucesso!', token });
+            user.password = newPassword; // O hook do modelo fará o hash
+            await user.save();
+
+            // Envia e-mail de notificação de forma assíncrona
+            sendPasswordChangedEmail(user.email, user.completeName).catch(err => console.error("Falha ao enviar e-mail de confirmação:", err));
+
+            res.status(200).json({ message: 'Senha atualizada com sucesso.' });
         } catch (error) {
-            console.error('Erro durante registro do usuário:', error);
-            res.status(500).json({ message: 'Erro inesperado ao realizar registro: ', error });
-        }
-    }
-
-    static async WorkerRegister(req, res) {
-        try {
-            const { completeName, password, email, document, salary, position, type } = req.body;
-            const existingUser = await User.findOne({ where: { document } });
-
-            if (existingUser) {
-                return res.status(400).json({ message: 'Usuário com esse CPF já existe!' });
-            }
-
-            const newUser = await User.create({
-                completeName,
-                password,
-                email,
-                document,
-                salary,
-                position,
-                type
-            });
-
-            const token = generateToken({ document: newUser.document, type: newUser.type, expiresIn: '1h' });
-
-            res.status(201).json({ message: 'Trabalhador registrado com sucesso!', token });
-        } catch (error) {
-            console.error('Erro durante registro do trabalhador:', error);
-            res.status(500).json({ message: 'Erro inesperado ao realizar registro: ', error });
-        }
-    }
-
-    static async GetPatientName(req, res) {
-        try {
-            const { document } = req.query;
-
-            if (!document) {
-                return res.status(400).json({ message: 'O parâmetro "document" é obrigatório.' });
-            }
-
-            const patient = await User.findOne({
-                where: { document: document, type: 'patient' },
-                attributes: ['completeName']
-            });
-
-            if (!patient) {
-                return res.status(404).json({ message: 'Paciente não encontrado!' });
-            }
-
-            res.status(200).json(patient.completeName);
-        } catch (error) {
-            console.error('Erro ao obter informações do paciente:', error);
-            res.status(500).json({ message: 'Erro inesperado ao obter informações do paciente!' });
-        }
-    }
-
-    static async Login(req, res) {
-        try {
-            const { document, password } = req.body;
-
-            const user = await User.findOne({ where: { document }, attributes: ['type'] });
-
-            if (!user) {
-                return res.status(404).json({ message: 'Usuário não encontrado!' });
-            }
-
-            const isPasswordValid = await user.validatePassword(password);
-
-            if (!isPasswordValid) {
-                return res.status(401).json({ message: 'Credenciais inválidas!' });
-            }
-
-            const token = generateToken({ document: document, type: user.type, expiresIn: '1h' });
-            res.status(200).json({ message: 'Login feito com sucesso!', token });
-        } catch (error) {
-            console.error('Erro durante o login:', error);
-            res.status(500).json({ message: 'Erro inesperado durante o login! ', error });
+            res.status(500).json({ message: 'Erro ao atualizar a senha.', error: error.message });
         }
     }
 }

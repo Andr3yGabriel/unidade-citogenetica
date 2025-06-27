@@ -1,4 +1,4 @@
-const { Model } = require("../config/Database");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require('../config/Database');
 const bcrypt = require('bcryptjs');
 
@@ -9,49 +9,60 @@ class User extends Model {
 }
 
 User.init({
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     completeName: {
-        type: sequelize.DataTypes.STRING,
+        field: 'nome_completo',
+        type: DataTypes.STRING,
         allowNull: false,
     },
     email: {
-        type: sequelize.DataTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        }
     },
     document: {
-        type: sequelize.DataTypes.STRING(11),
+        field: 'documento',
+        type: DataTypes.STRING(11),
         allowNull: false,
-        primaryKey: true
+        unique: true
     },
     password: {
-        type: sequelize.DataTypes.STRING,
+        field: 'senha_hash',
+        type: DataTypes.STRING,
         allowNull: false,
     },
-    salary: {
-        type: sequelize.DataTypes.DECIMAL(10, 2),
-        allowNull: true,
+    userTypeId: {
+        field: 'id_tipo_usuario',
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
-    position: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
+    passwordResetToken: {
+        field: 'token_reset_senha',
+        type: DataTypes.STRING,
+        allowNull: true
     },
-    type: {
-        type: sequelize.DataTypes.STRING,
-        allowNull: false,
-    },
-    registrationDate: {
-        type: sequelize.DataTypes.DATE,
-        defaultValue: sequelize.DataTypes.NOW,
-        get() {
-            const rawValue = this.getDataValue('registrationDate');
-            return rawValue ? moment(rawValue).tz('America/Sao_Paulo').format() : null;
-        },
-        allowNull: false,
-    },
-}, { sequelize, modelName: "user", tableName: "user", timestamps: false });
-
-User.beforeCreate(async (user) => {
-    const hash = await bcrypt.hash(user.password, 10);
-    user.password = hash;
+    passwordResetExpires: {
+        field: 'expiracao_reset_senha',
+        type: DataTypes.DATE,
+        allowNull: true
+    }
+}, {
+    sequelize,
+    modelName: "User",
+    tableName: "usuarios",
+    hooks: {
+        beforeCreate: async (user) => {
+            const hash = await bcrypt.hash(user.password, 10);
+            user.password = hash;
+        }
+    }
 });
 
 module.exports = User;
