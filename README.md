@@ -11,13 +11,19 @@ O sistema gerenciador de exames genéticos é uma aplicação web desenvolvida c
 - **Infraestrutura**: Docker, Docker Compose
 
 ## Instalação do projeto
-1. Instancie os containers do docker-compose:
+1. Clone o repositório
+```bash
+git clone https://github.com/Andr3yGabriel/unidade-citogenetica
+cd unidade-citogenetica
+```
+
+3. Instancie os containers do docker-compose:
 ```bash
 cd api-citogenetica
 docker-compose up -d
 ```
 
-2. Instale localmente as dependências do frontend:
+3. Instale localmente as dependências do frontend:
 ```bash
 cd front-citogenetica
 npm install
