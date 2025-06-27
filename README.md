@@ -17,7 +17,7 @@ git clone https://github.com/Andr3yGabriel/unidade-citogenetica
 cd unidade-citogenetica
 ```
 
-3. Instancie os containers do docker-compose:
+2. Instancie os containers do docker-compose:
 ```bash
 cd api-citogenetica
 docker-compose up -d
