@@ -12,8 +12,6 @@ import { defineComponent, ref } from "vue";
 import apiClient from "../axiosConfig";
 import router from "../router/router";
 import "primeicons/primeicons.css";
-import { jwtDecode } from "jwt-decode";
-import type CustomJwtPayload from "../interfaces/CustomJwtPayload";
 
 export default defineComponent({
   name: "Register",
@@ -52,12 +50,11 @@ export default defineComponent({
           document: document.value
         };
 
-        const response = await apiClient.post("/patient/register", payload );
+        const response = await apiClient.post("/auth/register/patient", payload );
 
         const token = response.data.token;
         localStorage.setItem("token", token);
-        const decodedToken = jwtDecode<CustomJwtPayload>(token);
-        localStorage.setItem("userType", decodedToken.type.toString());
+        localStorage.setItem("userType", response.data.userType.toString());
         goToList();
       } catch (error) {
         console.error("Error at user register!", error);

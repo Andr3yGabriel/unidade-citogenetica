@@ -40,7 +40,7 @@ class AuthController {
 
             const payload = { userId: user.id, userType: user.userType.name };
             const token = generateToken(payload);
-            res.status(200).json({ token, userType: user.userType.name });
+            res.status(200).json({ token, userType: user.userType.name, userId: user.id });
         } catch (error) {
             res.status(500).json({ message: 'Erro inesperado durante o login.', error: error.message });
         }

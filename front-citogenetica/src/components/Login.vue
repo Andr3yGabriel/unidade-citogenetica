@@ -5,8 +5,6 @@ import apiClient from "../axiosConfig";
 import { Button, FloatLabel, InputText, Password, Toast, useToast } from "primevue";
 import router from "../router/router";
 import 'primeicons/primeicons.css';
-import { jwtDecode } from "jwt-decode";
-import type CustomJwtPayload from "../interfaces/CustomJwtPayload";
 
 
 export default defineComponent({
@@ -27,16 +25,15 @@ export default defineComponent({
 
     const login = async () => {
       try {
-        const response = await apiClient.post("/patient/login", {
+        const response = await apiClient.post("/auth/login", {
           document: document.value,
           password: password.value,
         });
 
         const token = response.data.token;
         localStorage.setItem("token", token);
-
-        const decodedToken = jwtDecode<CustomJwtPayload>(token);
-        localStorage.setItem("userType", decodedToken.type.toString());
+        localStorage.setItem("userType", response.data.userType.toString());
+        localStorage.setItem("userId", response.data.userId.toString());
 
         goToList();
       } catch (error) {
@@ -72,11 +69,15 @@ export default defineComponent({
     };
 
     const goToList = () => {
-      router.push("PatientList");
-    };
-
-    const goToWorkerLogin = () => {
-      router.push("WorkerLogin");
+      const userType = localStorage.getItem("userType");
+      if (userType === "paciente") {
+        router.push("PatientList");
+      }
+      else if (userType !== null && ["tecnico", "admin"].includes(userType)) {
+        router.push("AllExamsList");
+      } else if (userType === "medico") {
+        router.push("DoctorList");
+      }
     };
 
     return {
@@ -86,8 +87,7 @@ export default defineComponent({
       goToHome,
       goToRegister,
       goToForget,
-      errorMessage,
-      goToWorkerLogin
+      errorMessage
     };
   },
 });
@@ -122,7 +122,6 @@ export default defineComponent({
         <div class="link-login">
           <a class="a-login" @click="goToRegister">Cadastre-se</a>
           <a class="a-login disabled" @click="goToForget">Esqueci minha senha</a>
-          <a class="a-login" @click="goToWorkerLogin">Sou funcionário</a>
         </div>
 
         <Button @Click="login" label="Entrar" severity="secondary" rounded />

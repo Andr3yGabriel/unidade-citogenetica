@@ -44,12 +44,12 @@ router.get('/exams/all',
     authorize(['tecnico', 'admin']),
     ExamController.listAllExams
 );
-router.get('/exams/doctor',
+router.get('/exams/doctor/:doctorId',
     authenticateToken,
     authorize(['medico']),
     ExamController.listDoctorExams
 );
-router.get('/exams/patient',
+router.get('/exams/patient/:patientId',
     authenticateToken,
     authorize(['paciente']),
     ExamController.listPatientExams

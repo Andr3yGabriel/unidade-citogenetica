@@ -2,11 +2,31 @@
 import { Button, Toast, useToast } from "primevue";
 import { defineComponent, onMounted, ref } from "vue";
 import apiClient from "../axiosConfig";
-import type { Exam } from "../interfaces/Exam";
 import router from "../router/router";
 
+interface ApiPatientExamResponse {
+  id: number;
+  data_solicitacao: string;
+  patient: {
+    id: number;
+    completeName: string;
+  };
+  examStatus: {
+    name: string;
+  };
+}
+
+// Formato dos dados para exibição na tela
+interface DisplayPatientExam {
+  id: number;
+  patient_name: string;
+  registrationDate: string;
+  status: string;
+}
+
 export default defineComponent({
-  name: "DoctorList",
+  // 1. Nome do componente atualizado
+  name: "PatientExamsPage",
   components: {
     Button,
     Toast,
@@ -14,93 +34,61 @@ export default defineComponent({
   setup() {
     const toast = useToast();
     const token = localStorage.getItem("token") || "";
-    const exams = ref<any[]>([]);
+    const exams = ref<DisplayPatientExam[]>([]);
     const errorMessage = ref<string | null>(null);
-    const userType = localStorage.getItem("userType");
 
     const fetchExams = async () => {
-      if (token === "") {
+      if (!token) {
         errorMessage.value = "Sessão expirada!";
         toast.add({
           severity: "error",
-          summary: "Error",
-          detail: errorMessage,
+          summary: "Erro de Autenticação",
+          detail: errorMessage.value,
         });
-        router.push("Login");
+        router.push("/Login");
         return;
       }
       try {
-        const response = await apiClient.get("/exam/patient", {
+        // A chamada de API para buscar os exames do paciente (identificado pelo token)
+        const response = await apiClient.get<ApiPatientExamResponse[]>(`/exams/patient/${localStorage.getItem("userId")}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        exams.value = await Promise.all(
-          response.data.map(async (exam: Exam) => ({
-            id: exam.id,
-            patient_document: exam.patientDocument,
-            registrationDate: new Date(exam.registrationDate).toLocaleDateString("pt-BR"),
-            resultFile: exam.resultFile,
-            status: exam.resultFile ? "PRONTO" : "NO LABORATÓRIO",
-            patient_name: await findUserName(exam.patientDocument),
-          }))
-        );
+        // 2. Lógica simplificada: não precisa mais buscar o nome do paciente
+        // O map agora é síncrono e muito mais rápido
+        exams.value = response.data.map((exam: ApiPatientExamResponse) => ({
+                    id: exam.id,
+                    patient_name: exam.patient.completeName,
+                    registrationDate: new Date(exam.data_solicitacao).toLocaleDateString('pt-BR'),
+                    status: exam.examStatus.name
+                }));
 
       } catch (error) {
         console.error("Erro ao listar exames: ", error);
-        errorMessage.value = "Erro ao listar exames!";
+        errorMessage.value = "Não foi possível carregar seus exames. Tente novamente mais tarde.";
         toast.add({
           severity: "error",
-          summary: "Error",
-          detail: errorMessage,
+          summary: "Erro",
+          detail: errorMessage.value,
         });
       }
     };
 
-    const findUserName = async (patient_document: string) => {
-            if (token === "") {
-                errorMessage.value = "Sessão expirada!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-                router.push("Login");
-                return;
-            }
-
-            try {
-              const response = await apiClient.get(`/patient?document=${patient_document}`, {
-                  headers: {
-                      Authorization: `Bearer ${token}`
-                  }
-              });
-
-                return response.data
-            } catch (error) {
-                console.error("Erro ao buscar usuário: ", error);
-                errorMessage.value = "Erro ao buscar usuário!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-            }
-        }
+    // 3. A função findUserName foi removida, pois não é mais necessária.
 
     onMounted(() => {
       fetchExams();
     });
 
-    const handleExamClick = (examId: string, status: string) => {
-      localStorage.setItem("selectedExamId", examId);
-      console.log("Exam ID:", examId);
-      if (userType === "patient" && status === "PRONTO") {
-        console.log("Redirecting to Result page");
-        router.push("Result");
-      }
-    };
+    const handleExamClick = (examId: number) => {
+            // 5. LÓGICA DE CLIQUE SIMPLIFICADA
+            // Para um médico, a ação principal é visualizar o resultado do exame,
+            // independentemente do status.
+            localStorage.setItem("selectedExamId", examId.toString());
+            router.push("/result");
+        };
 
     const goToHome = () => {
       router.push("/");
@@ -126,48 +114,56 @@ export default defineComponent({
         class="logo"
       />
     </a>
-    <span
-      ><ion-icon name="person-circle-outline" class="user-profile"></ion-icon
-    ></span>
+    <span>
+      <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
+    </span>
   </nav>
   <main id="box-situacao">
-    <h1 class="titulo">Situação de Exames</h1>
+    <h1 class="titulo">Meus Exames</h1>
 
     <section id="tabela-pacientes">
       <div v-if="exams.length < 1" class="sem-exames">
-        <h3>Não há exames a serem exibidos</h3>
+          <h3>Nenhum exame solicitado foi encontrado.</h3>
       </div>
-      <ul>
-        <li
-          v-for="exam in exams"
-          :key="exam.id"
-          class="card-lab"
-          :class="{ 'card-pronto': exam.status === 'PRONTO' }"
-          @click="handleExamClick(exam.id.toString(), exam.status)"
-        >
-          <span class="info-paciente">
-            <p>{{ exam.patient_name }}</p>
-            <p>{{ exam.registrationDate }}</p>
-          </span>
-          <span class="status">
-            <p>{{ exam.status }}</p>
-          </span>
-        </li>
-      </ul>
+        <ul>
+          <li 
+            v-for="exam in exams" 
+            :key="exam.id" 
+            class="card-lab" 
+            :class="{ 'card-pronto': exam.status === 'Laudo Disponível' }"
+            @click="handleExamClick(exam.id)"
+          >
+            <span class="info-paciente">
+              <p>{{ exam.patient_name }}</p>
+              <p>{{ exam.registrationDate }}</p>
+            </span>
+            <span class="status">
+              <p>{{ exam.status }}</p>
+            </span>
+          </li>
+        </ul>
     </section>
   </main>
   <footer>
-    <p>
-      Desenvolvido por
-      <a href="https://github.com/Andr3yGabriel">Andrey Gonçalves</a> |
-      <a href="https://github.com/javu4k">Júlia Peghini</a> |
-      <a href="https://github.com/s4abr1na">Sabrina Souza </a> |
-      <a href="https://github.com/davih1660">Davi Cruz</a> - 2024
-    </p>
+      <p>
+          Desenvolvido por
+          <a href="https://github.com/Andr3yGabriel">Andrey Gonçalves</a> |
+          <a href="https://github.com/javu4k">Júlia Peghini</a> |
+          <a href="https://github.com/s4abr1na">Sabrina Souza </a> |
+          <a href="https://github.com/davih1660">Davi Cruz</a> - 2024
+      </p>
   </footer>
 </template>
 
 <style lang="scss">
+
+.card-lab {
+  cursor: pointer;
+}
+
+.card-lab:not(.card-pronto) {
+  cursor: default;
+}
 .navbar {
   display: flex;
   padding: 10px;

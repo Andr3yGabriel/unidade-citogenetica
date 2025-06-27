@@ -2,8 +2,29 @@
 import { Button, Toast, useToast } from 'primevue';
 import { defineComponent, onMounted, ref } from 'vue';
 import apiClient from '../axiosConfig';
-import type { Exam } from '../interfaces/Exam';
 import router from '../router/router';
+
+// 1. Interfaces claras para os dados
+// Resposta da API para a rota do médico
+interface ApiDoctorExamResponse {
+  id: number;
+  data_solicitacao: string;
+  patient: {
+    id: number;
+    completeName: string;
+  };
+  examStatus: {
+    name: string;
+  };
+}
+
+// Formato dos dados para exibição na tela
+interface DisplayDoctorExam {
+  id: number;
+  patient_name: string;
+  registrationDate: string;
+  status: string;
+}
 
 export default defineComponent({
     name: "DoctorList",
@@ -14,102 +35,70 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const token = localStorage.getItem("token") || "";
-        const exams = ref<any[]>([]);
-        const errorMessage = ref<string | null>(null);
-        const userType = localStorage.getItem("userType");
-
+        
+        const exams = ref<DisplayDoctorExam[]>([]);
+        
         const fetchExams = async () => {
-            if (token === "") {
-                errorMessage.value = "Sessão expirada!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-                router.push("Login");
-                return;
-            }
-              try {
-                  const response = await apiClient.get('/exam/doctor', {
-                      headers: {
-                          Authorization: `Bearer ${token}`
-                      }
-                  });
-
-                  exams.value = await Promise.all(response.data.map(async (exam: Exam) => ({
-                      id: exam.id,
-                      patientDocument: exam.patientDocument,
-                      registrationDate: new Date(exam.registrationDate).toLocaleDateString('pt-BR'),
-                      resultFile: exam.resultFile,
-                      status: exam.resultFile ? "PRONTO" : "NO LABORATÓRIO",
-                      patient_name: await findUserName(exam.patientDocument)
-                  })));
-
-                  console.log(exams);
-              } catch (error) {
-                  console.error("Erro ao listar exames: ", error);
-                  errorMessage.value = "Erro ao listar exames!";
-                  toast.add({
-                      severity: "error",
-                      summary: "Error",
-                      detail: errorMessage
-                  });
-              }
-        };
-
-        const findUserName = async (patient_document: string) => {
-            if (token === "") {
-                errorMessage.value = "Sessão expirada!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-                router.push("Login");
+            if (!token) {
+                toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada. Faça o login novamente." });
+                router.push("/login");
                 return;
             }
 
             try {
-              const response = await apiClient.get(`/patient?document=${patient_document}`, {
-                  headers: {
-                      Authorization: `Bearer ${token}`
-                  }
-              });
-
-                return response.data
-            } catch (error) {
-                console.error("Erro ao buscar usuário: ", error);
-                errorMessage.value = "Erro ao buscar usuário!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
+                // 2. CHAMADA DE API CORRETA
+                // Usamos o endpoint específico que retorna os exames solicitados pelo médico logado.
+                const response = await apiClient.get<ApiDoctorExamResponse[]>(`/exams/doctor/${localStorage.getItem("userId")}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 });
-            }
-        }
+                
+                // 3. TRANSFORMAÇÃO DE DADOS SIMPLIFICADA E EFICIENTE
+                // Mapeamos a resposta da API diretamente, sem chamadas aninhadas.
+                exams.value = response.data.map((exam: ApiDoctorExamResponse) => ({
+                    id: exam.id,
+                    patient_name: exam.patient.completeName,
+                    registrationDate: new Date(exam.data_solicitacao).toLocaleDateString('pt-BR'),
+                    status: exam.examStatus.name
+                }));
 
+            } catch (error: any) {
+                console.error("Erro ao listar exames do médico: ", error);
+                const detail = error.response?.data?.message || "Não foi possível buscar os exames.";
+                toast.add({ severity: "error", summary: "Erro de Rede", detail });
+            }
+        };
+        
+        // 4. A FUNÇÃO 'findUserName' FOI REMOVIDA, pois é obsoleta.
+        
         onMounted(() => {
             fetchExams();
         });
 
-        const handleExamClick = (examId: string, status: string) => {
-            localStorage.setItem("selectedExamId", examId);
-            if (userType === "3" && status === "NO LABORATÓRIO") {
-                router.push("AddExamFile");
-            } else {
-                router.push("Result");
-            }
+        const handleExamClick = (examId: number) => {
+            // 5. LÓGICA DE CLIQUE SIMPLIFICADA
+            // Para um médico, a ação principal é visualizar o resultado do exame,
+            // independentemente do status.
+            localStorage.setItem("selectedExamId", examId.toString());
+            router.push("/result");
         };
 
         const goToHome = () => {
             router.push("/");
-        }
+        };
+
+        // 6. FUNÇÃO PARA NAVEGAÇÃO
+        // Adicionada a função para o botão "Novo Exame".
+        const goToNewExam = () => {
+            router.push("/new-exam"); // Substitua pelo nome correto da sua rota
+        };
 
         return {
             exams,
-            errorMessage,
             handleExamClick,
             goToHome,
+            goToNewExam,
         }
     }
 });
@@ -125,15 +114,16 @@ export default defineComponent({
           class="logo"
         />
       </a>
-      <span
-        ><ion-icon name="person-circle-outline" class="user-profile"></ion-icon
-      ></span>
+      <span>
+        <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
+      </span>
     </nav>
     <main id="box-situacao">
-      <h1 class="titulo">Situação de Exames</h1>
+      <h1 class="titulo">Meus Exames Solicitados</h1>
 
       <section id="box-interacao">
-        <span id="bt-add-exame">
+        <!-- Botão "Novo Exame" agora é funcional -->
+        <span id="bt-add-exame" @click="goToNewExam" style="cursor: pointer;">
           <ion-icon name="add-outline" id="add-box"></ion-icon>
           <p>Novo Exame</p>
         </span>
@@ -141,15 +131,15 @@ export default defineComponent({
 
       <section id="tabela-pacientes">
         <div v-if="exams.length < 1" class="sem-exames">
-            <h3>Não há exames a serem exibidos</h3>
+            <h3>Nenhum exame solicitado foi encontrado.</h3>
         </div>
           <ul>
             <li 
               v-for="exam in exams" 
               :key="exam.id" 
               class="card-lab" 
-              :class="{ 'card-pronto': exam.status === 'PRONTO' }"
-              @click="handleExamClick(exam.id.toString(), exam.status)"
+              :class="{ 'card-pronto': exam.status === 'Laudo Disponível' }"
+              @click="handleExamClick(exam.id)"
             >
               <span class="info-paciente">
                 <p>{{ exam.patient_name }}</p>

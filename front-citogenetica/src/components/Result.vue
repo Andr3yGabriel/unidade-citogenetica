@@ -88,11 +88,11 @@ export default defineComponent({
 
         const back = () => {
             const userType = localStorage.getItem("userType");
-            if (userType === "doctor") {
+            if (userType === "medico") {
                 router.push("DoctorList");
-            } else if (userType === "technical" || userType === "admin") {
+            } else if (userType === "tecnico" || userType === "admin") {
                 router.push("AllExamsList");
-            } else if (userType === "patient") {
+            } else if (userType === "paciente") {
                 router.push("PatientList");
             }
         }

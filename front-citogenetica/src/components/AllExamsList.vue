@@ -2,8 +2,30 @@
 import { Button, Toast, useToast } from 'primevue';
 import { defineComponent, onMounted, ref } from 'vue';
 import apiClient from '../axiosConfig';
-import type { Exam } from '../interfaces/Exam';
 import router from '../router/router';
+
+// 1. (BOA PRÁTICA) Definir interfaces claras para os dados
+// O que a API retorna
+interface ApiExamResponse {
+  id: number;
+  data_solicitacao: string;
+  patient: {
+    id: number;
+    completeName: string;
+  };
+  examStatus: {
+    name: string;
+  };
+  // Adicione outros campos que a API retorna, se necessário
+}
+
+// O que vamos usar para exibir na tela
+interface DisplayExam {
+  id: number;
+  patient_name: string;
+  registrationDate: string;
+  status: string; // Ex: 'Em Análise', 'Laudo Disponível'
+}
 
 export default defineComponent({
     name: "AllExamsList",
@@ -14,90 +36,63 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const token = localStorage.getItem("token") || "";
-        const exams = ref<any[]>([]);
+        const userType = localStorage.getItem("userType") || "";
+
+        // O ref agora é tipado com a nossa interface de exibição
+        const exams = ref<DisplayExam[]>([]);
         const errorMessage = ref<string | null>(null);
-        const userType = localStorage.getItem("userType");
-
+        
         const fetchExams = async () => {
-            if (token === "") {
-                errorMessage.value = "Sessão expirada!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-                router.push("Login");
-                return;
-            }
-              try {
-                  const response = await apiClient.get('/exams', {
-                      headers: {
-                          Authorization: `Bearer ${token}`
-                      }
-                  });
-
-                  exams.value = await Promise.all(response.data.map(async (exam: Exam) => ({
-                      id: exam.id,
-                      patientDocument: exam.patientDocument,
-                      registrationDate: new Date(exam.registrationDate).toLocaleDateString('pt-BR'),
-                      resultFile: exam.resultFile,
-                      status: exam.resultFile ? "PRONTO" : "NO LABORATÓRIO",
-                      patient_name: await findUserName(exam.patientDocument)
-                  })));
-
-                  console.log(exams);
-              } catch (error) {
-                  console.error("Erro ao listar exames: ", error);
-                  errorMessage.value = "Erro ao listar exames!";
-                  toast.add({
-                      severity: "error",
-                      summary: "Error",
-                      detail: errorMessage
-                  });
-              }
-        };
-
-        const findUserName = async (patient_document: string) => {
-            if (token === "") {
-                errorMessage.value = "Sessão expirada!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
-                });
-                router.push("Login");
+            if (!token) {
+                toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada ou inválida. Por favor, faça o login novamente." });
+                router.push("/login"); // Corrigido para uma rota com /
                 return;
             }
 
             try {
-              const response = await apiClient.get(`/patient?document=${patient_document}`, {
-                  headers: {
-                      Authorization: `Bearer ${token}`
-                  }
-              });
-
-                return response.data
-            } catch (error) {
-                console.error("Erro ao buscar usuário: ", error);
-                errorMessage.value = "Erro ao buscar usuário!";
-                toast.add({
-                    severity: "error",
-                    summary: "Error",
-                    detail: errorMessage
+                // 2. A CHAMADA DE API CORRETA
+                // Usamos o endpoint que retorna todos os exames para técnicos/admins.
+                const response = await apiClient.get<ApiExamResponse[]>('/exams/all', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 });
-            }
-        }
+                
+                // 3. TRANSFORMAÇÃO DE DADOS SIMPLIFICADA
+                // Não há mais 'Promise.all' ou chamadas aninhadas.
+                // Mapeamos diretamente a resposta da API para o formato que queremos exibir.
+                exams.value = response.data.map((exam: ApiExamResponse) => ({
+                    id: exam.id,
+                    patient_name: exam.patient.completeName, // Vem direto da API
+                    registrationDate: new Date(exam.data_solicitacao).toLocaleDateString('pt-BR'), // Usamos o campo correto
+                    status: exam.examStatus.name // Vem direto da API
+                }));
 
+            } catch (error: any) {
+                console.error("Erro ao listar exames: ", error);
+                const detail = error.response?.data?.message || "Não foi possível buscar os exames.";
+                toast.add({ severity: "error", summary: "Erro de Rede", detail });
+            }
+        };
+        
+        // 4. FUNÇÃO 'findUserName' REMOVIDA
+        // Não é mais necessária, pois a API já nos fornece o nome do paciente.
+        
         onMounted(() => {
             fetchExams();
         });
 
-        const handleExamClick = (examId: string, status: string) => {
-            localStorage.setItem("selectedExamId", examId);
-            if (userType === "technical" && status === "NO LABORATÓRIO") {
-                router.push("AddExamFile");
+        const handleExamClick = (examId: number, status: string) => {
+            localStorage.setItem("selectedExamId", examId.toString());
+            
+            // 5. LÓGICA DE STATUS ATUALIZADA
+            // Usamos os novos nomes de status vindos da API.
+            // Se o usuário é técnico e o status NÃO é 'Laudo Disponível' ou 'Cancelado', ele pode adicionar o laudo.
+            if (userType === "Técnico de Laboratório" && status !== 'Laudo Disponível' && status !== 'Cancelado') {
+                router.push("/add-exam-file"); // Corrigido para uma rota com /
             } else {
-                router.push("Result");
+                // Para todos os outros casos (laudo pronto, outros tipos de usuário), vai para a página de resultado.
+                router.push("/result"); // Corrigido para uma rota com /
             }
         };
 
@@ -141,8 +136,8 @@ export default defineComponent({
               v-for="exam in exams" 
               :key="exam.id" 
               class="card-lab" 
-              :class="{ 'card-pronto': exam.status === 'PRONTO' }"
-              @click="handleExamClick(exam.id.toString(), exam.status)"
+              :class="{ 'card-pronto': exam.status === 'laudo_disponivel' }"
+              @click="handleExamClick(exam.id, exam.status)"
             >
               <span class="info-paciente">
                 <p>{{ exam.patient_name }}</p>

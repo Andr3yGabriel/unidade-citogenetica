@@ -27,7 +27,7 @@ class ExamController {
      */
     static async listDoctorExams(req, res) {
         try {
-            const doctorId = req.body.doctorId;
+            const { doctorId } = req.params;
             const exams = await db.Exam.findAll({
                 where: { requestingDoctorId: doctorId },
                 include: ['patient', 'examType', 'examStatus'] // Usando os 'as' definidos no models/index.js
@@ -43,10 +43,10 @@ class ExamController {
      */
     static async listPatientExams(req, res) {
         try {
-            const patientId = req.body.patientId;
+            const { patientId } = req.params;
             const exams = await db.Exam.findAll({
                 where: { patientId: patientId },
-                include: ['requestingDoctor', 'examType', 'examStatus']
+                include: ['patient', 'examType', 'examStatus']
             });
             res.status(200).json(exams);
         } catch (error) {
