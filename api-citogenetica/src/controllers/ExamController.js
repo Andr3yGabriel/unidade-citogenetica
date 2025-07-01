@@ -1,25 +1,26 @@
 const db = require('../models'); // Usando o objeto db para acesso fácil
+const { ExameService } = require('../services/ExamesService'); // Importando o serviço de exames
 
 class ExamController {
     /**
      * Cria um novo exame. Apenas para Técnicos e Admins.
      */
     static async createExam(req, res) {
-        try {
-            const { patientId, requestingDoctorId, examTypeId } = req.body;
-            const initialStatus = await db.ExamStatus.findOne({ where: { name: 'solicitado' } });
-            if (!initialStatus) return res.status(500).json({ message: 'Status "solicitado" não configurado.' });
 
-            const newExam = await db.Exam.create({
-                patientId,
-                requestingDoctorId,
-                examTypeId,
-                examStatusId: initialStatus.id
-            });
-            res.status(201).json({ message: "Exame registrado com sucesso!", exam: newExam });
-        } catch (error) {
-            res.status(500).json({ message: 'Erro ao registrar exame.', error: error.message });
-        }
+    
+        ExameService.createExam(mapperRequestCreateExame(req.body));
+
+
+    }
+
+    static mapperRequestCreateExame(data) {
+        return {
+            patientId: data.patientId,
+            requestingDoctorId: data.requestingDoctorId,
+            examTypeId: data.examTypeId,
+            examStatusId: data.examStatusId || 1,
+            nomeExame: data.nomeExame || 'Exame Padrão',
+        };
     }
 
     /**
@@ -32,6 +33,8 @@ class ExamController {
                 where: { requestingDoctorId: doctorId },
                 include: ['patient', 'examType', 'examStatus'] // Usando os 'as' definidos no models/index.js
             });
+
+            ExameService.createExam(exams);
             res.status(200).json(exams);
         } catch (error) {
             res.status(500).json({ message: 'Erro ao listar exames do médico.', error: error.message });
