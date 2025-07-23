@@ -17,7 +17,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - NODE_ENV=production
       - EMAIL_USER=${EMAIL_USER}
-      - EMAIL_PASS=${EMAIL_PASSWORD}
+      - EMAIL_PASS=${EMAIL_PASSW}
     volumes:
       - laudos_data:/usr/src/app/uploads
     depends_on:
