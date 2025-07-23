@@ -9,11 +9,14 @@ export interface UserAttributes {
     document: string;
     password_hash: string;
     userTypeId: number;
-    passwordResetToken?: string;
-    passwordResetExpires?: Date;
+    passwordResetToken?: string | null;
+    passwordResetExpires?: Date | null;
+    isActive?: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserCreationAttributes extends Optional<UserAttributes, "id" | "createdAt" | "updatedAt"> { }
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public id!: number;
@@ -27,6 +30,10 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
     public async validatePassword(password: string): Promise<boolean> {
         return await bcrypt.compare(password, this.password_hash);
+    }
+
+    public async hashPassword(password: string): Promise<string> {
+        return await bcrypt.hash(password, 10);
     }
 
     public readonly createdAt!: Date;
@@ -77,6 +84,21 @@ User.init({
         field: 'expiracao_reset_senha',
         type: DataTypes.DATE,
         allowNull: true
+    },
+    isActive: {
+        field: 'is_active',
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: {
+        field: 'data_cadastro',
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        field: 'data_atualizacao',
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
     sequelize,

@@ -9,10 +9,9 @@ export interface ExamAttributes {
     examTypeId: number;
     examStatusId: number;
     conclusionDate?: Date;
-    nomeExame: string;
 }
 
-export interface ExamCreationAttributes extends Optional<ExamAttributes, "id"> {}
+export interface ExamCreationAttributes extends Optional<ExamAttributes, "id"> { }
 
 class Exam extends Model<ExamAttributes, ExamCreationAttributes> implements ExamAttributes {
     public id!: number;
@@ -22,7 +21,6 @@ class Exam extends Model<ExamAttributes, ExamCreationAttributes> implements Exam
     public examTypeId!: number;
     public examStatusId!: number;
     public conclusionDate?: Date;
-    public nomeExame!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -63,11 +61,6 @@ Exam.init({
         field: "data_conclusao",
         type: DataTypes.DATE,
         allowNull: true,
-    },
-    nomeExame: {
-        field: "nome_exame",
-        type: DataTypes.STRING,
-        allowNull: false,
     }
 }, {
     sequelize,

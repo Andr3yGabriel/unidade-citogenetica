@@ -1,5 +1,6 @@
 import User, { UserAttributes } from '../models/User';
 import UserType from '../models/UserType';
+import { Op } from 'sequelize';
 
 interface UserCreationData {
     completeName: string;
@@ -42,6 +43,46 @@ class UserRepository {
 
     async updateUser(user: User, data: Partial<UserAttributes>): Promise<User> {
         await user.update(data);
+        return user;
+    }
+
+    async findAllWorkers(): Promise<User[]> {
+        const workers = await User.findAll({
+            include: [{
+                model: UserType,
+                as: 'userType',
+                where: { name: { [Op.in]: ['tecnico', 'medico', 'admin'] } }
+            }]
+        });
+        return workers;
+    }
+
+    async deactivateUser(userId: number): Promise<void> {
+        const user = await User.findByPk(userId);
+        if (user) {
+            await user.update({ isActive: false });
+        }
+    }
+
+    async activateUser(userId: number): Promise<void> {
+        const user = await User.findByPk(userId);
+        if (user) {
+            await user.update({ isActive: true });
+        }
+    }
+
+    async findAllUserTypes(): Promise<UserType[]> {
+        const userTypes = await UserType.findAll();
+        return userTypes;
+    }
+
+    async findUserTypeByName(name: string): Promise<UserType | null> {
+        const userType = await UserType.findOne({ where: { name } });
+        return userType;
+    }
+
+    async findUserByResetToken(token: string): Promise<User | null> {
+        const user = await User.findOne({ where: { passwordResetToken: token } });
         return user;
     }
 }

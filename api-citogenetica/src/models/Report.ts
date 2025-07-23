@@ -8,9 +8,11 @@ export interface ReportAttributes {
     fileName: string;
     mimeType: string;
     fileSizeBytes: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-export interface ReportCreationAttributes extends Optional<ReportAttributes, "id"> {}
+export interface ReportCreationAttributes extends Optional<ReportAttributes, "id" | "createdAt" | "updatedAt"> {}
 
 class Report extends Model<ReportAttributes, ReportCreationAttributes> implements ReportAttributes {
     public id!: number;
@@ -54,6 +56,16 @@ Report.init({
     fileSizeBytes: {
         field: "tamanho_bytes",
         type: DataTypes.BIGINT
+    },
+    createdAt: {
+        field: "data_upload",
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        field: "data_atualizacao",
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
     sequelize,

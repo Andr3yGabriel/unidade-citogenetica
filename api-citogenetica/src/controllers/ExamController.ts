@@ -17,7 +17,6 @@ class ExamController {
                 requestingDoctorId: exameData.requestingDoctorId,
                 examTypeId: exameData.examTypeId,
                 examStatusId: initialStatus.id,
-                nomeExame: exameData.nomeExame || 'Exame Padrão',
             };
 
             const newExam = await ExamRepository.createExam(newExamData);
@@ -63,6 +62,15 @@ class ExamController {
             res.status(200).json(exams);
         } catch (error: any) {
             res.status(500).json({ message: 'Erro ao listar todos os exames.', error: error.message });
+        }
+    }
+
+    static async listExamTypes(req: Request, res: Response): Promise<void> {
+        try {
+            const examTypes = await ExamRepository.findAllExamTypes();
+            res.status(200).json(examTypes);
+        } catch (error: any) {
+            res.status(500).json({ message: 'Erro ao listar tipos de exame.', error: error.message });
         }
     }
 }

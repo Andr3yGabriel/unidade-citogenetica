@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./api-citogenetica
+      dockerfile: Dockerfile
+    environment:
+      - DB_URL=${DB_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - UPLOAD_PATH=/usr/src/app/uploads
+      - FRONTEND_URL=${FRONTEND_URL}
+      - DB_DIALECT=${DB_DIALECT}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - NODE_ENV=production
+    volumes:
+      - laudos_data:/usr/src/app/uploads
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./front-citogenetica
+      dockerfile: Dockerfile
+      args:
+        - VITE_APP_API_URL=${VITE_APP_API_URL}
+    ports:
+      - "80:80"
+    volumes:
+      - laudos_data:/usr/src/app/uploads:ro
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+  laudos_data:

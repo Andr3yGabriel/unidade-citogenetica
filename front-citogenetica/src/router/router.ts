@@ -1,12 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LandingPage from "../components/LandingPage.vue";
-import Login from "../components/Login.vue";
-import Register from "../components/Register.vue";
-import DoctorList from "../components/DoctorList.vue";
-import AddExamFile from "../components/AddExamFile.vue";
-import Result from "../components/Result.vue";
-import PatientList from "../components/PatientList.vue";
-import AllExamsList from "../components/AllExamsList.vue";
+import LandingPage from "../pages/LandingPage.vue";
+import Login from "../pages/Login.vue";
+import Register from "../pages/Register.vue";
+import DoctorList from "../pages/DoctorList.vue";
+import AddExamFile from "../pages/AddExamFile.vue";
+import Result from "../pages/Result.vue";
+import PatientList from "../pages/PatientList.vue";
+import AllExamsList from "../pages/AllExamsList.vue";
+import AdminList from "../pages/AdminList.vue";
+import RequestExam from "../pages/RequestExam.vue";
+import AddWorker from "../pages/AddWorker.vue";
+import ForgetPassword from "../pages/ForgetPassword.vue";
+import PasswordReset from "../pages/PasswordReset.vue";
 
 const routes = [
     {
@@ -48,6 +53,31 @@ const routes = [
         path: '/AllExamsList',
         name: 'AllExamsList',
         component: AllExamsList
+    },
+    {
+        path: '/AdminList',
+        name: 'AdminList',
+        component: AdminList
+    },
+    {
+        path: '/RequestExam',
+        name: 'RequestExam',
+        component: RequestExam
+    },
+    {
+        path: '/AddWorker',
+        name: 'AddWorker',
+        component: AddWorker
+    },
+    {
+        path: '/ForgetPassword',
+        name: 'ForgetPassword',
+        component: ForgetPassword
+    },
+    {
+        path: '/PasswordReset',
+        name: 'PasswordReset',
+        component: PasswordReset
     }
 ];
 

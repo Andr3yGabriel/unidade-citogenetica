@@ -5,6 +5,7 @@ import Lara from '@primevue/themes/lara';
 import router from './router/router';
 import { ToastService, Tooltip } from 'primevue';
 import { definePreset } from '@primevue/themes';
+import './assets/styles/global.scss';
 
 const preset = definePreset(Lara, {
     semantic: {

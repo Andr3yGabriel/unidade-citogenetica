@@ -22,7 +22,6 @@ const createPasswordResetHtml = (userName: string, resetUrl: string): string => 
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>/* ... estilos omitidos para brevidade, são os mesmos da resposta anterior ... */</style>
     </head>
     <body>
         <div class="container" style="max-width: 600px; margin: 40px auto; padding: 30px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px;">
@@ -49,7 +48,6 @@ const createPasswordChangedHtml = (userName: string): string => {
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>/* ... estilos omitidos para brevidade ... */</style>
     </head>
     <body>
         <div class="container" style="max-width: 600px; margin: 40px auto; padding: 30px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px;">

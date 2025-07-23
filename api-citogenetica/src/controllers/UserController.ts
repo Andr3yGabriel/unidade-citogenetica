@@ -29,6 +29,31 @@ class UserController {
             res.status(500).json({ message: 'Erro ao atualizar a senha.', error: error.message });
         }
     }
+
+    static async findUserByDocument(req: Request, res: Response): Promise<void> {
+        try {
+            const { document } = req.params;
+            const user = await UserRepository.findUserByDocument(document);
+
+            if (!user) {
+                res.status(404).json({ message: 'Usuário não encontrado.' });
+                return;
+            }
+
+            res.status(200).json(user);
+        } catch (error: any) {
+            res.status(500).json({ message: 'Erro ao buscar usuário.', error: error.message });
+        }
+    }
+
+    static async listUserTypes(req: Request, res: Response): Promise<void> {
+        try {
+            const userTypes = await UserRepository.findAllUserTypes();
+            res.status(200).json(userTypes);
+        } catch (error: any) {
+            res.status(500).json({ message: 'Erro ao listar tipos de usuário.', error: error.message });
+        }
+    }
 }
 
 export default UserController;

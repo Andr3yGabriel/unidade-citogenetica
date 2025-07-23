@@ -4,12 +4,13 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "start": "node server.ts",
+    "start": "node dist/server.js",
     "dev": "nodemon --exec npx ts-node server.ts",
-    "db:migrate": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate",
+    "db:migrate": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli db:migrate",
     "db:seed": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:all",
     "db:reset:dev": "npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed",
-    "db:migrate:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate:undo:all"
+    "db:migrate:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate:undo:all",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Andr3yGabriel",

@@ -26,6 +26,11 @@ class ExamRepository {
         await exam.update(data);
         return exam;
     }
+
+    async findAllExamTypes(): Promise<any[]> {
+        const examTypes = await db.ExamType.findAll();
+        return examTypes;
+    }
 }
 
 export default new ExamRepository();

@@ -19,6 +19,11 @@ class ReportRepository {
         await report.update(data);
         return report;
     }
+
+    async findReportByExamId(examId: number): Promise<any> {
+        const report = await db.Report.findOne({ where: { examId } });
+        return report;
+    }
 }
 
 export default new ReportRepository();

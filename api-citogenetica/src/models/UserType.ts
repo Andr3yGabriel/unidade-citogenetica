@@ -23,10 +23,9 @@ UserType.init({
     },
     name: {
         field: 'nome',
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        comment: 'Ex: paciente, medico, tecnico, admin'
+        unique: true
     },
     description: {
         field: 'descricao',

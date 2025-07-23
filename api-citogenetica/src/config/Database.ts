@@ -27,9 +27,7 @@ const sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, proc
     define: {
         freezeTableName: true,
         underscored: true,
-        timestamps: true,
-        createdAt: 'data_cadastro',
-        updatedAt: 'data_atualizacao'
+        timestamps: true
     },
 });
 

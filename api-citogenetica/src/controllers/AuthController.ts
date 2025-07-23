@@ -8,9 +8,9 @@ class AuthController {
     static async patientRegister(req: Request, res: Response): Promise<void> {
         try {
             const { completeName, password, email, document } = req.body;
-            const patientType = await UserRepository.findUserTypeById(3); // ID 3 para paciente
-            if (!patientType) {
-                res.status(500).json({ message: 'Configuração de papel "paciente" não encontrada.' });
+            const userType = await UserRepository.findUserTypeByName('paciente');
+            if (!userType) {
+                res.status(500).json({ message: 'Tipo de usuário "paciente" não encontrado.' });
                 return;
             }
 
@@ -20,8 +20,8 @@ class AuthController {
                 return;
             }
 
-            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, document, userTypeId: patientType.id });
-            res.status(201).json({ message: 'Paciente registrado com sucesso!', userId: newUser.id });
+            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, document, userTypeId: userType.id });
+            res.status(201).json({ message: 'Paciente registrado com sucesso!' });
         } catch (error: any) {
             res.status(500).json({ message: 'Erro inesperado ao registrar paciente.', error: error.message });
         }
@@ -57,13 +57,34 @@ class AuthController {
                 user.passwordResetExpires = new Date(Date.now() + ONE_HOUR);
                 await UserRepository.updateUser(user, { passwordResetToken: resetToken, passwordResetExpires: new Date(Date.now() + ONE_HOUR) });
 
-                const resetUrl = `${process.env.FRONTEND_URL}/resetar-senha?token=${resetToken}`;
+                const resetUrl = `${process.env.FRONTEND_URL}/PasswordReset?token=${resetToken}`;
                 await sendPasswordResetEmail(user.email, user.completeName, resetUrl);
             }
 
             res.status(200).json({ message: 'Se um usuário com este e-mail existir, instruções para redefinir a senha foram enviadas.' });
         } catch (error: any) {
             res.status(500).json({ message: 'Erro ao solicitar redefinição de senha.', error: error.message });
+        }
+    }
+
+    static async resetPassword(req: Request, res: Response): Promise<void> {
+        try {
+            const { token, newPassword } = req.body;
+
+            const user = await UserRepository.findUserByResetToken(token);
+
+            if (!user || (user.passwordResetExpires && user.passwordResetExpires < new Date())) {
+                res.status(400).json({ message: 'Token inválido ou expirado.' });
+                return;
+            }
+
+            const hashedPassword = await user.hashPassword(newPassword);
+
+            await UserRepository.updateUser(user, { password_hash: hashedPassword, passwordResetToken: null, passwordResetExpires: null });
+
+            res.status(200).json({ message: 'Senha redefinida com sucesso!' });
+        } catch (error: any) {
+            res.status(500).json({ message: 'Erro ao redefinir senha.', error: error.message });
         }
     }
 }
