@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "nodemon --exec npx ts-node server.ts",
+    "dev": "nodemon --exec npx ts-node src/server.ts",
     "db:migrate": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli db:migrate",
     "db:seed": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:all",
     "db:reset:dev": "npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed",
@@ -15,9 +15,6 @@
   "keywords": [],
   "author": "Andr3yGabriel",
   "license": "ISC",
-  "engines": {
-    "node": "18.x"
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

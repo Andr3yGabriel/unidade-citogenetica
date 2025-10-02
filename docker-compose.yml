@@ -15,11 +15,13 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
       - EMAIL_USER=${EMAIL_USER}
-      - EMAIL_PASS=${EMAIL_PASSW}
+      - EMAIL_PASS=${EMAIL_PASS}
     volumes:
       - laudos_data:/usr/src/app/uploads
+    ports:
+      - "3000:3000"
     depends_on:
       - db
 
