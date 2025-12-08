@@ -3,9 +3,9 @@ import { defineComponent, ref, onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import apiClient from "../axiosConfig";
-import BackButton from '../components/BackButton.vue';
+import BackButton from "../components/BackButton.vue";
 import { Button, FloatLabel, InputText, Password } from "primevue";
-import 'primeicons/primeicons.css';
+import "primeicons/primeicons.css";
 
 export default defineComponent({
   name: "Login",
@@ -24,7 +24,11 @@ export default defineComponent({
 
     onMounted(() => {
       if (router.currentRoute.value.query.registered === "true") {
-        toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário registrado com sucesso!" });
+        toast.add({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Usuário registrado com sucesso!",
+        });
         router.replace({ query: { registered: undefined } });
       }
     });
@@ -43,7 +47,10 @@ export default defineComponent({
 
         goToList(userType);
       } catch (error: any) {
-        const detail = error.response?.status === 404 ? "Usuário não encontrado" : "Erro ao fazer login!";
+        const detail =
+          error.response?.status === 404
+            ? "Usuário não encontrado"
+            : "Erro ao fazer login!";
         toast.add({ severity: "error", summary: "Erro", detail });
       }
     };
@@ -52,22 +59,28 @@ export default defineComponent({
     const goToHome = () => router.push("/");
     const goToForget = () => router.push("/ForgetPassword");
 
+    const listChoices: { [key: string]: string } = {
+      paciente: "/PatientList",
+      tecnico: "/AllExamsList",
+      admin: "/AdminList",
+      medico: "/DoctorList",
+    };
+
     const goToList = (userType: string) => {
-      switch (userType) {
-        case "paciente":
-          router.push("/PatientList");
-          break;
-        case "tecnico":
-          router.push("/AllExamsList");
-          break;
-        case "admin":
-          router.push("/AdminList");
-          break;
-        case "medico":
-          router.push("/DoctorList");
-          break;
-        default:
-          toast.add({ severity: "error", summary: "Erro", detail: "Tipo de usuário inválido" });
+      const route = listChoices[userType];
+      if (route) {
+        router.push(route);
+        toast.add({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Login realizado com sucesso!",
+        });
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "Tipo de usuário inválido",
+        });
       }
     };
 
@@ -77,7 +90,7 @@ export default defineComponent({
       login,
       goToHome,
       goToRegister,
-      goToForget
+      goToForget,
     };
   },
 });
@@ -85,9 +98,8 @@ export default defineComponent({
 
 <template>
   <div id="container-login">
-    <Toast position="top-left" />
     <aside id="bloco-imagem-login">
-      <BackButton to="/" style="position: fixed; top: 30px; left: 30px;" />
+      <BackButton to="/" style="position: fixed; top: 30px; left: 30px" />
       <div id="img-login-div">
         <img id="img-login" src="../assets/login.png" />
       </div>
@@ -97,14 +109,27 @@ export default defineComponent({
       <h1 id="titulo-login">Faça seu Login</h1>
       <section id="box-form-login">
         <FloatLabel variant="on">
-          <InputText v-tooltip="'Insira seu CPF (Somente números)'" id="document" v-model="document" type="text"
-            class="login-input" size="large" />
+          <InputText
+            v-tooltip="'Insira seu CPF (Somente números)'"
+            id="document"
+            v-model="document"
+            type="text"
+            class="login-input"
+            size="large"
+          />
           <label for="document">CPF</label>
         </FloatLabel>
 
         <FloatLabel variant="on">
-          <Password v-tooltip="'Insira sua senha'" id="password" v-model="password" type="password" :feedback="false"
-            toggleMask fluid />
+          <Password
+            v-tooltip="'Insira sua senha'"
+            id="password"
+            v-model="password"
+            type="password"
+            :feedback="false"
+            toggleMask
+            fluid
+          />
           <label for="document">Senha</label>
         </FloatLabel>
 
@@ -113,7 +138,7 @@ export default defineComponent({
           <a class="a-login" @click="goToForget">Esqueci minha senha</a>
         </div>
 
-        <Button @Click="login" label="Entrar" severity="secondary" rounded />
+        <Button @click="login" label="Entrar" severity="secondary" rounded />
       </section>
     </main>
   </div>
@@ -202,7 +227,6 @@ export default defineComponent({
     }
   }
 }
-
 
 @media (max-width: 1024px) {
   #container-login {
