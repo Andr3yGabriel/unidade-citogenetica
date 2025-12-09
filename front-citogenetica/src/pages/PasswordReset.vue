@@ -1,102 +1,102 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useRouter, useRoute } from 'vue-router';
-import apiClient from '../axiosConfig';
-import AppHeader from '../components/AppHeader.vue';
-import AppFooter from '../components/AppFooter.vue';
-import BackButton from '../components/BackButton.vue';
-import { Button, Password, FloatLabel } from 'primevue';
+import { defineComponent, ref, onMounted } from "vue";
+import { useToast } from "primevue/usetoast";
+import { useRouter, useRoute } from "vue-router";
+import apiClient from "../axiosConfig";
+import AppHeader from "../components/AppHeader.vue";
+import AppFooter from "../components/AppFooter.vue";
+import BackButton from "../components/BackButton.vue";
+import { Button, Password, FloatLabel } from "primevue";
 
 export default defineComponent({
-    name: "PasswordReset",
-    components: {
-        AppHeader,
-        AppFooter,
-        BackButton,
-        Password,
-        Button,
-        FloatLabel
-    },
-    setup() {
-        const toast = useToast();
-        const router = useRouter();
-        const route = useRoute();
-        const newPassword = ref<string>('');
-        const confirmNewPassword = ref<string>('');
-        const token = ref<string | null>(null);
+  name: "PasswordReset",
+  components: {
+    AppHeader,
+    AppFooter,
+    BackButton,
+    Password,
+    Button,
+    FloatLabel,
+  },
+  setup() {
+    const toast = useToast();
+    const router = useRouter();
+    const route = useRoute();
+    const newPassword = ref<string>("");
+    const confirmNewPassword = ref<string>("");
+    const token = ref<string | null>(null);
 
-        onMounted(() => {
-            token.value = route.query.token as string;
-            if (!token.value) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'Token de redefinição de senha não encontrado.'
-                });
-                router.push('/Login');
-            }
+    onMounted(() => {
+      token.value = route.query.token as string;
+      if (!token.value) {
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "Token de redefinição de senha não encontrado.",
         });
+        router.push("/Login");
+      }
+    });
 
-        const handleSubmit = async () => {
-            if (!newPassword.value || !confirmNewPassword.value) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'Por favor, preencha todos os campos.'
-                });
-                return;
-            }
+    const handleSubmit = async () => {
+      if (!newPassword.value || !confirmNewPassword.value) {
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "Por favor, preencha todos os campos.",
+        });
+        return;
+      }
 
-            if (newPassword.value !== confirmNewPassword.value) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'As senhas não coincidem.'
-                });
-                return;
-            }
+      if (newPassword.value !== confirmNewPassword.value) {
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "As senhas não coincidem.",
+        });
+        return;
+      }
 
-            try {
-                await apiClient.post('/auth/reset-password', {
-                    token: token.value,
-                    newPassword: newPassword.value
-                });
-                toast.add({
-                    severity: 'success',
-                    summary: 'Sucesso',
-                    detail: 'Senha redefinida com sucesso!'
-                });
-                router.push('/Login');
-            } catch (error: any) {
-                const detail = error.response?.data?.message || 'Erro ao redefinir senha.';
-                toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: detail
-                });
-            }
-        };
+      try {
+        await apiClient.post("/auth/reset-password", {
+          token: token.value,
+          newPassword: newPassword.value,
+        });
+        toast.add({
+          severity: "success",
+          summary: "Sucesso",
+          detail: "Senha redefinida com sucesso!",
+        });
+        router.push("/Login");
+      } catch (error: any) {
+        const detail =
+          error.response?.data?.message || "Erro ao redefinir senha.";
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: detail,
+        });
+      }
+    };
 
-        const handleCancel = () => {
-            router.push('/Login');
-        };
+    const handleCancel = () => {
+      router.push("/Login");
+    };
 
-        return {
-            newPassword,
-            confirmNewPassword,
-            handleSubmit,
-            handleCancel,
-        };
-    }
+    return {
+      newPassword,
+      confirmNewPassword,
+      handleSubmit,
+      handleCancel,
+    };
+  },
 });
 </script>
 
 <template>
   <div id="container-login">
-    <Toast position="top-left" />
     <aside id="bloco-imagem-login">
-      <BackButton to="/Login" style="position: fixed; top: 30px; left: 30px;" />
+      <BackButton to="/Login" style="position: fixed; top: 30px; left: 30px" />
       <div id="img-login-div">
         <img id="img-login" src="../assets/login.png" />
       </div>
@@ -106,14 +106,28 @@ export default defineComponent({
       <h1 id="titulo-login">Redefinir Senha</h1>
       <section id="box-form-login">
         <FloatLabel variant="on">
-          <Password v-tooltip="'Insira sua nova senha'" id="newPassword" v-model="newPassword" :feedback="false"
-            toggleMask fluid class="login-input" />
+          <Password
+            v-tooltip="'Insira sua nova senha'"
+            id="newPassword"
+            v-model="newPassword"
+            :feedback="false"
+            toggleMask
+            fluid
+            class="login-input"
+          />
           <label for="newPassword">Nova Senha</label>
         </FloatLabel>
 
         <FloatLabel variant="on">
-          <Password v-tooltip="'Confirme sua nova senha'" id="confirmNewPassword" v-model="confirmNewPassword"
-            :feedback="false" toggleMask fluid class="login-input" />
+          <Password
+            v-tooltip="'Confirme sua nova senha'"
+            id="confirmNewPassword"
+            v-model="confirmNewPassword"
+            :feedback="false"
+            toggleMask
+            fluid
+            class="login-input"
+          />
           <label for="confirmNewPassword">Confirmar Nova Senha</label>
         </FloatLabel>
 
@@ -127,7 +141,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
-@use '../assets/styles/variables' as *;
+@use "../assets/styles/variables" as *;
 
 #container-login {
   display: flex;
@@ -225,7 +239,6 @@ export default defineComponent({
     }
   }
 }
-
 
 @media (max-width: 1024px) {
   #container-login {

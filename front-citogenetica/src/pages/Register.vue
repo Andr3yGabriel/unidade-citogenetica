@@ -3,7 +3,7 @@ import { defineComponent, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import apiClient from "../axiosConfig";
-import BackButton from '../components/BackButton.vue';
+import BackButton from "../components/BackButton.vue";
 import { Button, FloatLabel, InputText, Password } from "primevue";
 import "primeicons/primeicons.css";
 
@@ -27,7 +27,11 @@ export default defineComponent({
 
     const register = async () => {
       if (password.value !== confirmPassword.value) {
-        toast.add({ severity: "error", summary: "Erro", detail: "As senhas não coincidem" });
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "As senhas não coincidem",
+        });
         return;
       }
 
@@ -36,11 +40,14 @@ export default defineComponent({
           completeName: completeName.value,
           password: password.value,
           email: email.value,
-          document: document.value
+          document: document.value,
         });
         router.push({ path: "/Login", query: { registered: "true" } });
       } catch (error: any) {
-        const detail = error.response?.status === 409 ? "Usuário com esse email já existe!" : "Erro ao registrar usuário!";
+        const detail =
+          error.response?.status === 409
+            ? "Usuário com esse email já existe!"
+            : "Erro ao registrar usuário!";
         toast.add({ severity: "error", summary: "Erro", detail });
       }
     };
@@ -62,44 +69,84 @@ export default defineComponent({
 
 <template>
   <div id="pagina-registro">
-    <Toast position="top-left" />
     <main id="bloco-registro">
       <h1 class="titulo">Registre-se</h1>
       <section id="box-form-registro">
         <div id="inputs">
           <FloatLabel>
-            <InputText id="completeName" v-model="completeName" type="text" class="registro-input" size="large" />
+            <InputText
+              id="completeName"
+              v-model="completeName"
+              type="text"
+              class="registro-input"
+              size="large"
+            />
             <label for="completeName">Nome Completo</label>
           </FloatLabel>
           <FloatLabel>
-            <InputText id="email" v-model="email" type="text" class="registro-input" size="large" />
+            <InputText
+              id="email"
+              v-model="email"
+              type="text"
+              class="registro-input"
+              size="large"
+            />
             <label for="email">Email</label>
           </FloatLabel>
           <FloatLabel>
-            <InputText id="document" v-model="document" type="text" class="registro-input" size="large" />
+            <InputText
+              v-tooltip="'Insira seu CPF (Somente números)'"
+              id="document"
+              v-model="document"
+              type="text"
+              class="registro-input"
+              size="large"
+            />
             <label for="document">CPF</label>
           </FloatLabel>
           <FloatLabel>
-            <Password id="password" v-model="password" :feedback="false" toggleMask fluid />
+            <Password
+              id="password"
+              v-model="password"
+              :feedback="false"
+              toggleMask
+              fluid
+            />
             <label for="password">Senha</label>
           </FloatLabel>
           <FloatLabel>
-            <Password id="confirmPassword" v-model="confirmPassword" :feedback="false" toggleMask fluid />
+            <Password
+              id="confirmPassword"
+              v-model="confirmPassword"
+              :feedback="false"
+              toggleMask
+              fluid
+            />
             <label for="confirmPassword">Confirmar Senha</label>
           </FloatLabel>
         </div>
-        <Button @click="register" label="Registrar" severity="secondary" id="submit-registro" rounded />
+        <Button
+          @click="register"
+          label="Registrar"
+          severity="secondary"
+          id="submit-registro"
+          rounded
+        />
       </section>
     </main>
     <aside id="bloco-imagem-registro">
-      <BackButton to="/Login" style="position: fixed; top: 30px; right: 30px;" />
-      <img src="../assets/cadastro.png" alt="Mulher sentada em frente a um celular" id="imagem-registro" />
+      <BackButton to="/Login" style="position: fixed; top: 30px; right: 30px" />
+      <img
+        src="../assets/cadastro.png"
+        alt="Mulher sentada em frente a um celular"
+        id="imagem-registro"
+      />
     </aside>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@use '../assets/styles/variables' as *;
+@use "../assets/styles/variables" as *;
 
 #pagina-registro {
   display: flex;
@@ -144,7 +191,7 @@ export default defineComponent({
       height: 32px;
       background-color: $light-gray;
       box-shadow: 0px 2px gray;
-      transition: .2s;
+      transition: 0.2s;
 
       &:hover {
         box-shadow: 1px 3px gray;
