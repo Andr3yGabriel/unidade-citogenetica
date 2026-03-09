@@ -7,6 +7,9 @@ import AddExamFile from "../components/AddExamFile.vue";
 import Result from "../components/Result.vue";
 import PatientList from "../components/PatientList.vue";
 import AllExamsList from "../components/AllExamsList.vue";
+import BuscaPaciente from "../components/BuscaPaciente.vue";
+import RequestExam from "../pages/RequestExam.vue";
+import AdminPanel from "../components/AdminPanel.vue";
 
 const routes = [
     {
@@ -48,7 +51,23 @@ const routes = [
         path: '/AllExamsList',
         name: 'AllExamsList',
         component: AllExamsList
+    },
+    {
+        path: '/BuscaPaciente',
+        name: 'BuscaPaciente',
+        component: BuscaPaciente
+    },
+    {
+    path: '/RequestExam',
+    name: 'RequestExam',
+    component: RequestExam
+    },
+    {
+    path: '/AdminPanel',
+    name: 'AdminPanel',
+    component: AdminPanel
     }
+
 ];
 
 const router = createRouter({

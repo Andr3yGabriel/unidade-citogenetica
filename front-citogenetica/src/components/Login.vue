@@ -33,6 +33,7 @@ export default defineComponent({
         const token = response.data.token;
         localStorage.setItem("token", token);
         localStorage.setItem("userType", response.data.userType.toString());
+        console.log("UserType recebido:", response.data.userType);
         localStorage.setItem("userId", response.data.userId.toString());
 
         goToList();
@@ -71,12 +72,16 @@ export default defineComponent({
     const goToList = () => {
       const userType = localStorage.getItem("userType");
       if (userType === "paciente") {
-        router.push("PatientList");
+        router.push("/PatientList");
       }
-      else if (userType !== null && ["tecnico", "admin"].includes(userType)) {
-        router.push("AllExamsList");
-      } else if (userType === "medico") {
-        router.push("DoctorList");
+      else if (userType === "admin") {
+        router.push("/AdminPanel");
+      }
+      else if (userType === "tecnico") {
+        router.push("/AllExamsList");
+      }
+      else if (userType === "medico") {
+        router.push("/DoctorList");
       }
     };
 
