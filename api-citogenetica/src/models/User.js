@@ -33,6 +33,12 @@ User.init({
         allowNull: false,
         unique: true
     },
+    susNumber: {
+    field: 'numero_sus',
+    type: DataTypes.STRING(15),
+    allowNull: true,
+    unique: true
+    },
     password: {
         field: 'senha_hash',
         type: DataTypes.STRING,
