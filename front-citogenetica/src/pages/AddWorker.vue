@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import apiClient from '../axiosConfig';
@@ -7,13 +7,13 @@ import AppHeader from '../components/AppHeader.vue';
 import AppFooter from '../components/AppFooter.vue';
 import { Button, InputText, Select } from 'primevue';
 
-interface ExamType {
+interface UserType {
     id: number;
     name: string;
 }
 
 export default defineComponent({
-    name: "RequestExam",
+    name: "AddWorker",
     components: {
         AppHeader,
         AppFooter,
@@ -24,31 +24,36 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const router = useRouter();
-        const patientDocument = ref('');
-        const selectedExamType = ref<number | null>(null);
-        const examTypes = ref<ExamType[]>([]);
 
-        const fetchExamTypes = async () => {
+        const completeName = ref('');
+        const email = ref('');
+        const document = ref('');
+        const password = ref('');
+        const selectedUserType = ref<number | null>(null);
+        const userTypes = ref<UserType[]>([]);
+
+        const fetchUserTypes = async () => {
             try {
-                const response = await apiClient.get<ExamType[]>('/exam-types', {
+                const response = await apiClient.get<UserType[]>('/user-types', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
                     }
                 });
-                examTypes.value = response.data;
+                // Filtrar para incluir apenas 'tecnico', 'medico', 'admin'
+                userTypes.value = response.data.filter(type => type.name !== 'paciente');
             } catch (error) {
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível carregar os tipos de exame.'
+                    detail: 'Não foi possível carregar os tipos de usuário.'
                 });
             }
         };
 
-        onMounted(fetchExamTypes);
+        onMounted(fetchUserTypes);
 
         const handleSubmit = async () => {
-            if (!patientDocument.value || !selectedExamType.value) {
+            if (!completeName.value || !email.value || !document.value || !password.value || !selectedUserType.value) {
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
@@ -58,19 +63,12 @@ export default defineComponent({
             }
 
             try {
-                const patientResponse = await apiClient.get(`/users/document/${patientDocument.value}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-                });
-
-                const patientId = patientResponse.data.id;
-                const requestingDoctorId = Number(localStorage.getItem('userId'));
-
-                await apiClient.post('/exams', {
-                    patientId,
-                    requestingDoctorId,
-                    examTypeId: selectedExamType.value
+                await apiClient.post('/admin/register/worker', {
+                    completeName: completeName.value,
+                    email: email.value,
+                    document: document.value,
+                    password: password.value,
+                    userTypeId: selectedUserType.value
                 }, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -80,27 +78,30 @@ export default defineComponent({
                 toast.add({
                     severity: 'success',
                     summary: 'Sucesso',
-                    detail: 'Solicitação de exame criada com sucesso!'
+                    detail: 'Funcionário registrado com sucesso!'
                 });
-                router.push('/DoctorList');
+                router.push('/AdminList');
 
             } catch (error) {
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível criar a solicitação de exame.'
+                    detail: 'Erro ao registrar funcionário.'
                 });
             }
         };
 
         const handleCancel = () => {
-            router.push('/DoctorList');
+            router.push('/AdminList');
         };
 
         return {
-            patientDocument,
-            selectedExamType,
-            examTypes,
+            completeName,
+            email,
+            document,
+            password,
+            selectedUserType,
+            userTypes,
             handleSubmit,
             handleCancel
         };
@@ -112,18 +113,30 @@ export default defineComponent({
     <div class="page-container">
         <AppHeader />
         <div class="container">
-            <h2>Solicitar Novo Exame</h2>
+            <h2>Registrar Novo Funcionário</h2>
             <form @submit.prevent="handleSubmit">
                 <div class="p-field">
-                    <label for="cpf">CPF do Paciente:</label>
-                    <InputText id="cpf" v-model="patientDocument" />
+                    <label for="completeName">Nome Completo:</label>
+                    <InputText id="completeName" v-model="completeName" />
                 </div>
                 <div class="p-field">
-                    <label for="exam-type">Tipo de Exame:</label>
-                    <Select id="exam-type" v-model="selectedExamType" :options="examTypes" optionLabel="name" optionValue="id" placeholder="Selecione o tipo de exame" />
+                    <label for="email">Email:</label>
+                    <InputText id="email" v-model="email" type="email" />
+                </div>
+                <div class="p-field">
+                    <label for="document">CPF:</label>
+                    <InputText id="document" v-model="document" />
+                </div>
+                <div class="p-field">
+                    <label for="password">Senha:</label>
+                    <InputText id="password" v-model="password" type="password" />
+                </div>
+                <div class="p-field">
+                    <label for="user-type">Tipo de Usuário:</label>
+                    <Select id="user-type" v-model="selectedUserType" :options="userTypes" optionLabel="name" optionValue="id" placeholder="Selecione o tipo de funcionário" />
                 </div>
                 <div class="buttons">
-                    <Button type="submit" label="Enviar" class="p-button-success" />
+                    <Button type="submit" label="Registrar" class="p-button-success" />
                     <Button type="button" label="Cancelar" class="p-button-danger" @click="handleCancel" />
                 </div>
             </form>

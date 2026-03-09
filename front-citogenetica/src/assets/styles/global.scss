@@ -1,0 +1,25 @@
+// front-citogenetica/src/assets/styles/global.scss
+@use './variables' as *;
+
+body {
+  font-family: $font-family;
+  margin: 0;
+  background-color: $background-color;
+}
+
+footer {
+    background-color: $light-gray;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: $dark-gray;
+
+    a {
+        color: $primary-color;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
