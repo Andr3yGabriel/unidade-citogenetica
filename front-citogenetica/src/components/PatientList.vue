@@ -1,6 +1,6 @@
 <script lang="ts">
-import { Button, Toast, useToast } from "primevue";
-import { defineComponent, onMounted, ref } from "vue";
+import { Button, Toast, useToast, Dropdown } from "primevue";
+import { defineComponent, onMounted, ref, computed } from "vue";
 import apiClient from "../axiosConfig";
 import router from "../router/router";
 
@@ -16,7 +16,6 @@ interface ApiPatientExamResponse {
   };
 }
 
-// Formato dos dados para exibição na tela
 interface DisplayPatientExam {
   id: number;
   patient_name: string;
@@ -24,18 +23,48 @@ interface DisplayPatientExam {
   status: string;
 }
 
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
 export default defineComponent({
-  // 1. Nome do componente atualizado
   name: "PatientExamsPage",
   components: {
     Button,
     Toast,
+    Dropdown
   },
   setup() {
     const toast = useToast();
     const token = localStorage.getItem("token") || "";
+    const userId = localStorage.getItem("userId") || "";
+    
     const exams = ref<DisplayPatientExam[]>([]);
+    const allExams = ref<DisplayPatientExam[]>([]);
     const errorMessage = ref<string | null>(null);
+    const userName = ref<string>("Carregando...");
+    const showDropdown = ref(false);
+
+    // Filtro
+    const selectedFilter = ref<string>("todos");
+    const filterOptions = ref<FilterOption[]>([
+      { label: "Todos os Exames", value: "todos" },
+      { label: "Solicitados", value: "solicitado" },
+      { label: "Laudo Disponível", value: "laudo_disponivel" }
+    ]);
+
+    const fetchUserInfo = async () => {
+      try {
+        const response = await apiClient.get(`/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        userName.value = response.data.completeName || response.data.email || "Paciente";
+      } catch (error) {
+        console.error("Erro ao buscar info do usuário:", error);
+        userName.value = "Paciente";
+      }
+    };
 
     const fetchExams = async () => {
       if (!token) {
@@ -48,26 +77,27 @@ export default defineComponent({
         router.push("/Login");
         return;
       }
+
       try {
-        // A chamada de API para buscar os exames do paciente (identificado pelo token)
-        const response = await apiClient.get<ApiPatientExamResponse[]>(`/exams/patient/${localStorage.getItem("userId")}`, {
+        const patientId = localStorage.getItem("selectedPatientId") || userId;
+        const response = await apiClient.get<ApiPatientExamResponse[]>(`/exams/patient/${patientId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        // 2. Lógica simplificada: não precisa mais buscar o nome do paciente
-        // O map agora é síncrono e muito mais rápido
-        exams.value = response.data.map((exam: ApiPatientExamResponse) => ({
-                    id: exam.id,
-                    patient_name: exam.patient.completeName,
-                    registrationDate: new Date(exam.data_solicitacao).toLocaleDateString('pt-BR'),
-                    status: exam.examStatus.name
-                }));
+        allExams.value = response.data.map((exam: ApiPatientExamResponse) => ({
+          id: exam.id,
+          patient_name: exam.patient.completeName,
+          registrationDate: new Date(exam.data_solicitacao).toLocaleDateString('pt-BR'),
+          status: exam.examStatus.name
+        }));
+
+        applyFilter();
 
       } catch (error) {
         console.error("Erro ao listar exames: ", error);
-        errorMessage.value = "Não foi possível carregar seus exames. Tente novamente mais tarde.";
+        errorMessage.value = "Não foi possível carregar seus exames.";
         toast.add({
           severity: "error",
           summary: "Erro",
@@ -76,22 +106,59 @@ export default defineComponent({
       }
     };
 
-    // 3. A função findUserName foi removida, pois não é mais necessária.
+    const applyFilter = () => {
+      if (selectedFilter.value === "todos") {
+        exams.value = allExams.value;
+      } else {
+        exams.value = allExams.value.filter(exam => exam.status === selectedFilter.value);
+      }
+    };
 
-    onMounted(() => {
-      fetchExams();
+    const examCounts = computed(() => {
+      return {
+        total: allExams.value.length,
+        solicitado: allExams.value.filter(e => e.status === 'solicitado').length,
+        laudo_disponivel: allExams.value.filter(e => e.status === 'laudo_disponivel').length
+      };
+    });
+
+    onMounted(async () => {
+      await fetchUserInfo();
+      await fetchExams();
     });
 
     const handleExamClick = (examId: number) => {
-            // 5. LÓGICA DE CLIQUE SIMPLIFICADA
-            // Para um médico, a ação principal é visualizar o resultado do exame,
-            // independentemente do status.
-            localStorage.setItem("selectedExamId", examId.toString());
-            router.push("/result");
-        };
+      localStorage.setItem("selectedExamId", examId.toString());
+      router.push("/result");
+    };
 
     const goToHome = () => {
       router.push("/");
+    };
+
+    const toggleDropdown = () => {
+      showDropdown.value = !showDropdown.value;
+    };
+
+    const logout = () => {
+      localStorage.clear();
+      toast.add({
+        severity: "success",
+        summary: "Logout realizado",
+        detail: "Você foi desconectado com sucesso."
+      });
+      router.push("/login");
+    };
+
+    const formatStatus = (status: string) => {
+      return status
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+
+    const onFilterChange = () => {
+      applyFilter();
     };
 
     return {
@@ -99,82 +166,156 @@ export default defineComponent({
       errorMessage,
       handleExamClick,
       goToHome,
+      userName,
+      showDropdown,
+      toggleDropdown,
+      logout,
+      formatStatus,
+      selectedFilter,
+      filterOptions,
+      onFilterChange,
+      examCounts
     };
   },
 });
 </script>
 
 <template>
-  <Toast position="top-left" />
+  <Toast position="top-right" />
+
+  <!-- Navbar -->
   <nav class="navbar">
-    <a @click="goToHome">
+    <a @click="goToHome" style="cursor: pointer;">
       <img
         src="../assets/logo-unidade.jpg"
-        alt="Logo da unidade genética com um cromossomo desenhado"
+        alt="Logo da unidade genética"
         class="logo"
       />
     </a>
-    <span>
-      <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
-    </span>
-  </nav>
-  <main id="box-situacao">
-    <h1 class="titulo">Meus Exames</h1>
 
-    <section id="tabela-pacientes">
-      <div v-if="exams.length < 1" class="sem-exames">
-          <h3>Nenhum exame solicitado foi encontrado.</h3>
+    <!-- Dropdown de Perfil -->
+    <div class="user-menu-wrapper">
+      <button @click="toggleDropdown" class="user-button">
+        <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
+      </button>
+
+      <div v-if="showDropdown" class="dropdown-menu">
+        <div class="dropdown-header">
+          <div class="user-info">
+            <i class="pi pi-user"></i>
+            <span class="user-name">{{ userName }}</span>
+          </div>
+          <div class="user-role">
+            <i class="pi pi-id-card"></i>
+            <span>Paciente</span>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <button @click="logout" class="dropdown-item logout">
+          <i class="pi pi-sign-out"></i>
+          <span>Sair</span>
+        </button>
       </div>
-        <ul>
-          <li 
-            v-for="exam in exams" 
-            :key="exam.id" 
-            class="card-lab" 
-            :class="{ 'card-pronto': exam.status === 'Laudo Disponível' }"
-            @click="handleExamClick(exam.id)"
-          >
-            <span class="info-paciente">
-              <p>{{ exam.patient_name }}</p>
-              <p>{{ exam.registrationDate }}</p>
-            </span>
-            <span class="status">
-              <p>{{ exam.status }}</p>
-            </span>
-          </li>
-        </ul>
-    </section>
-  </main>
-  <footer>
-      <p>
-          Desenvolvido por
-          <a href="https://github.com/Andr3yGabriel">Andrey Gonçalves</a> |
-          <a href="https://github.com/javu4k">Júlia Peghini</a> |
-          <a href="https://github.com/s4abr1na">Sabrina Souza </a> |
-          <a href="https://github.com/davih1660">Davi Cruz</a> - 2024
-      </p>
-  </footer>
+    </div>
+  </nav>
+
+  <!-- Container Principal -->
+  <div class="page-container" @click="showDropdown = false">
+    <div class="content-wrapper">
+      <!-- Header -->
+      <div class="page-header">
+        <h1>Meus Exames</h1>
+        <p class="subtitle">
+          {{ examCounts.total }} exames • 
+          {{ examCounts.solicitado }} pendentes • 
+          {{ examCounts.laudo_disponivel }} concluídos
+        </p>
+      </div>
+
+      <!-- Filtro -->
+      <div class="controls-row">
+        <div class="filter-container">
+          <label for="statusFilter">Filtrar por status:</label>
+          <Dropdown 
+            id="statusFilter"
+            v-model="selectedFilter" 
+            :options="filterOptions" 
+            optionLabel="label" 
+            optionValue="value"
+            @change="onFilterChange"
+            class="status-dropdown"
+          />
+        </div>
+      </div>
+
+      <!-- Lista de Exames -->
+      <div class="exams-container">
+        <div v-if="exams.length === 0" class="no-exams">
+          <i class="pi pi-inbox" style="font-size: 3rem; color: #94a3b8;"></i>
+          <h3>Nenhum exame encontrado</h3>
+          <p v-if="selectedFilter !== 'todos'">
+            Não há exames com o filtro selecionado.
+          </p>
+          <p v-else>Você ainda não possui exames cadastrados.</p>
+        </div>
+
+        <div 
+          v-for="exam in exams" 
+          :key="exam.id"
+          class="exam-card"
+          :class="{ 'exam-completed': exam.status === 'laudo_disponivel' }"
+          @click="handleExamClick(exam.id)"
+        >
+          <div class="exam-info">
+            <div class="patient-name">
+              <i class="pi pi-file-edit"></i>
+              <span>Exame de {{ exam.patient_name }}</span>
+            </div>
+            <div class="exam-date">
+              <i class="pi pi-calendar"></i>
+              <span>{{ exam.registrationDate }}</span>
+            </div>
+          </div>
+          <div class="exam-status">
+            <span class="status-badge">{{ formatStatus(exam.status) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style lang="scss">
-
-.card-lab {
-  cursor: pointer;
-}
-
-.card-lab:not(.card-pronto) {
-  cursor: default;
-}
+<style scoped>
+/* Navbar */
 .navbar {
   display: flex;
-  padding: 10px;
+  padding: 10px 20px;
   align-items: center;
   justify-content: space-between;
   background-color: #0062ae;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
 }
 
 .logo {
   width: 190px;
   height: 100px;
+  cursor: pointer;
+}
+
+/* User Menu */
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 .user-profile {
@@ -182,83 +323,260 @@ export default defineComponent({
   width: 50px;
   color: white;
   font-weight: 200;
+  transition: transform 0.2s ease;
 }
 
-#box-situacao {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: 10px 0px;
+.user-button:hover .user-profile {
+  transform: scale(1.1);
+}
 
-  .titulo {
-    color: #6e6e6e;
-    font-weight: 300;
-    font-size: 2.5rem;
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  z-index: 1000;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.sem-exames {
-  h3 {
-    font-weight: 350;
-  }
-}
-
-#tabela-pacientes {
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  width: fit-content;
-}
-
-.card-lab {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #f1dac4;
-  width: 800px;
-  height: 75px;
-  margin: 5px 0px;
-  border-radius: 10px;
-  padding: 15px;
-  text-decoration: none;
-}
-
-.card-lab p {
-  color: #000;
-  font-weight: 500;
-}
-
-.card-pronto {
-  background-color: #0062ae;
-}
-
-.card-pronto p {
+.dropdown-header {
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #0062ae 0%, #004a87 100%);
+  border-radius: 8px 8px 0 0;
   color: white;
 }
 
-.bt-home {
+.user-info,
+.user-role {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: #f8f5f5;
-  box-shadow: 0px 3px gray;
-  border-radius: 22px;
-  height: 35px;
-  width: 250px;
-  margin: 50px 0px;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
-.bt-home a {
-  font-style: normal;
-  text-decoration: none;
-  color: #000;
+.user-role {
+  margin-bottom: 0;
+  opacity: 0.9;
 }
 
-@media (max-width: 1024px) {
+.user-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.user-info i,
+.user-role i {
+  font-size: 1.1rem;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: none;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+  border-radius: 0 0 8px 8px;
+}
+
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+.dropdown-item.logout {
+  color: #dc2626;
+}
+
+.dropdown-item i {
+  font-size: 1.1rem;
+}
+
+/* Container Principal */
+.page-container {
+  min-height: calc(100vh - 120px);
+  background-color: #f8fafc;
+  padding: 2rem 1rem;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Controls Row */
+.controls-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-container label {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.status-dropdown {
+  min-width: 200px;
+}
+
+/* Container de Exames */
+.exams-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Sem Exames */
+.no-exams {
+  background: white;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.no-exams h3 {
+  color: #475569;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
+.no-exams p {
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Card de Exame */
+.exam-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #f1dac4;
+}
+
+.exam-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.exam-completed {
+  border-left-color: #10b981;
+  background: linear-gradient(to right, #ecfdf5 0%, white 100%);
+}
+
+.exam-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.patient-name,
+.exam-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+}
+
+.patient-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.patient-name i,
+.exam-date i {
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+.exam-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.exam-completed .status-badge {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
   .navbar {
-    flex-direction: row;
     padding: 10px;
+  }
+
+  .logo {
+    width: 150px;
+    height: 80px;
   }
 
   .user-profile {
@@ -266,60 +584,45 @@ export default defineComponent({
     width: 40px;
   }
 
-  #box-situacao .titulo {
-    font-size: 2rem;
-    text-align: center;
-    margin: 20px 0;
+  .dropdown-menu {
+    right: -10px;
   }
 
-  #box-interacao {
-    width: 100%;
-    align-items: center;
+  .page-container {
+    padding: 1rem 0.5rem;
   }
 
-  #bt-add-exame {
-    width: 100%;
-    max-width: 200px;
-    margin: 10px auto;
+  .page-header h1 {
+    font-size: 1.5rem;
   }
 
-  #barra-pesquisa {
-    width: 100%;
-    max-width: 400px;
-    margin: 10px auto;
+  .controls-row {
+    justify-content: stretch;
   }
 
-  #barra-pesquisa input {
-    width: calc(100% - 40px);
-  }
-
-  #filtros {
-    width: 100%;
-    max-width: 400px;
-    margin: 10px auto;
-  }
-
-  #filtros p {
-    font-size: 1.2rem;
-  }
-
-  #tabela-pacientes {
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
 
-  .card-lab,
-  .card-pronto {
+  .status-dropdown {
     width: 100%;
-    max-width: 400px;
+  }
+
+  .exam-card {
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px;
+    gap: 1rem;
   }
 
-  .bt-home {
+  .exam-status {
     width: 100%;
-    max-width: 200px;
-    margin: 20px auto;
+  }
+
+  .status-badge {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>
