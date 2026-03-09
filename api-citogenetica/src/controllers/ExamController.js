@@ -1,26 +1,28 @@
 const db = require('../models'); // Usando o objeto db para acesso fácil
-const { ExameService } = require('../services/ExamesService'); // Importando o serviço de exames
 
 class ExamController {
-    /**
-     * Cria um novo exame. Apenas para Técnicos e Admins.
-     */
     static async createExam(req, res) {
+        try {
+            const { patientId, requestingDoctorId, examTypeId } = req.body;
 
-    
-        ExameService.createExam(mapperRequestCreateExame(req.body));
+            const newExam = await db.Exam.create({
+                patientId,
+                requestingDoctorId,
+                examTypeId,
+                examStatusId: 1, // Status inicial (ex: "Em Análise")
+            });
 
-
-    }
-
-    static mapperRequestCreateExame(data) {
-        return {
-            patientId: data.patientId,
-            requestingDoctorId: data.requestingDoctorId,
-            examTypeId: data.examTypeId,
-            examStatusId: data.examStatusId || 1,
-            nomeExame: data.nomeExame || 'Exame Padrão',
-        };
+            res.status(201).json({
+                message: 'Exame criado com sucesso!',
+                exam: newExam
+            });
+        } catch (error) {
+            console.error('Erro ao criar exame:', error);
+            res.status(500).json({
+                message: 'Erro ao criar exame',
+                error: error.message
+            });
+        }
     }
 
     /**
@@ -31,13 +33,16 @@ class ExamController {
             const { doctorId } = req.params;
             const exams = await db.Exam.findAll({
                 where: { requestingDoctorId: doctorId },
-                include: ['patient', 'examType', 'examStatus'] // Usando os 'as' definidos no models/index.js
+                include: ['patient', 'examType', 'examStatus']
             });
-
-            ExameService.createExam(exams);
+            
             res.status(200).json(exams);
         } catch (error) {
-            res.status(500).json({ message: 'Erro ao listar exames do médico.', error: error.message });
+            console.error('Erro ao listar exames do médico:', error);
+            res.status(500).json({ 
+                message: 'Erro ao listar exames do médico.', 
+                error: error.message 
+            });
         }
     }
 
@@ -53,7 +58,11 @@ class ExamController {
             });
             res.status(200).json(exams);
         } catch (error) {
-            res.status(500).json({ message: 'Erro ao listar exames do paciente.', error: error.message });
+            console.error('Erro ao listar exames do paciente:', error);
+            res.status(500).json({ 
+                message: 'Erro ao listar exames do paciente.', 
+                error: error.message 
+            });
         }
     }
 
@@ -68,7 +77,30 @@ class ExamController {
             });
             res.status(200).json(exams);
         } catch (error) {
-            res.status(500).json({ message: 'Erro ao listar todos os exames.', error: error.message });
+            console.error('Erro ao listar todos os exames:', error);
+            res.status(500).json({ 
+                message: 'Erro ao listar todos os exames.', 
+                error: error.message 
+            });
+        }
+    }
+
+    /**
+     * Lista todos os tipos de exame disponíveis
+     */
+    static async listExamTypes(req, res) {
+        try {
+            const examTypes = await db.ExamType.findAll({
+                attributes: ['id', 'name'],
+                order: [['name', 'ASC']]
+            });
+            res.status(200).json(examTypes);
+        } catch (error) {
+            console.error('Erro ao listar tipos de exame:', error);
+            res.status(500).json({ 
+                message: 'Erro ao listar tipos de exame.', 
+                error: error.message 
+            });
         }
     }
 }
