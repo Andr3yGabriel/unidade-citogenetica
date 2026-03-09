@@ -33,11 +33,26 @@ Report.init({
     fileSizeBytes: {
         field: "tamanho_bytes",
         type: DataTypes.BIGINT
+    },
+    uploadDate: {
+        field: "data_upload",
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+        field: "data_atualizacao",
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     }
 }, {
     sequelize,
     modelName: "Report",
-    tableName: "laudos"
+    tableName: "laudos",
+    timestamps: true,
+    createdAt: 'uploadDate',
+    updatedAt: 'updatedAt'
 });
 
 module.exports = Report;
