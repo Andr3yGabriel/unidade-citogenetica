@@ -12,73 +12,23 @@ import RequestExam from "../pages/RequestExam.vue";
 import AddWorker from "../pages/AddWorker.vue";
 import ForgetPassword from "../pages/ForgetPassword.vue";
 import PasswordReset from "../pages/PasswordReset.vue";
+import AdminPanel from "../components/AdminPanel.vue";
 
 const routes = [
-    {
-        path: '/',
-        name: 'LandingPage',
-        component: LandingPage
-    },
-    {
-        path: '/Login',
-        name: 'Login',
-        component: Login
-    },
-    {
-        path: '/Register',
-        name: 'Register',
-        component: Register
-    },
-    {
-        path: '/DoctorList',
-        name: 'DoctorList',
-        component: DoctorList
-    },
-    {
-        path: '/AddExamFile',
-        name: 'AddExamFile',
-        component: AddExamFile
-    },
-    {
-        path: '/Result',
-        name: 'Result',
-        component: Result
-    },
-    {
-        path: '/PatientList',
-        name: 'PatientList',
-        component: PatientList
-    },
-    {
-        path: '/AllExamsList',
-        name: 'AllExamsList',
-        component: AllExamsList
-    },
-    {
-        path: '/AdminList',
-        name: 'AdminList',
-        component: AdminList
-    },
-    {
-        path: '/RequestExam',
-        name: 'RequestExam',
-        component: RequestExam
-    },
-    {
-        path: '/AddWorker',
-        name: 'AddWorker',
-        component: AddWorker
-    },
-    {
-        path: '/ForgetPassword',
-        name: 'ForgetPassword',
-        component: ForgetPassword
-    },
-    {
-        path: '/PasswordReset',
-        name: 'PasswordReset',
-        component: PasswordReset
-    }
+    { path: '/', name: 'LandingPage', component: LandingPage },
+    { path: '/Login', name: 'Login', component: Login },
+    { path: '/Register', name: 'Register', component: Register },
+    { path: '/DoctorList', name: 'DoctorList', component: DoctorList },
+    { path: '/AddExamFile', name: 'AddExamFile', component: AddExamFile },
+    { path: '/Result', name: 'Result', component: Result },
+    { path: '/PatientList', name: 'PatientList', component: PatientList },
+    { path: '/AllExamsList', name: 'AllExamsList', component: AllExamsList },
+    { path: '/AdminList', name: 'AdminList', component: AdminList },
+    { path: '/RequestExam', name: 'RequestExam', component: RequestExam },
+    { path: '/AddWorker', name: 'AddWorker', component: AddWorker },
+    { path: '/ForgetPassword', name: 'ForgetPassword', component: ForgetPassword },
+    { path: '/PasswordReset', name: 'PasswordReset', component: PasswordReset },
+    { path: '/AdminPanel', name: 'AdminPanel', component: AdminPanel }
 ];
 
 const router = createRouter({
