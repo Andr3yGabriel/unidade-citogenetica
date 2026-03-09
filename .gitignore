@@ -1,4 +1,6 @@
 api-citogenetica/.env
 api-citogenetica/node_modules
 front-citogenetica/node_modules
-front-citogenetica/.env
+front-citogenetica/.envapi-citogenetica@1.0.0
+nodemon
+package-lock.json
