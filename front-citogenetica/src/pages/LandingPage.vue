@@ -257,32 +257,44 @@ const loginPage = () => router.push('/Login');
 
         <div class="contatos-lista">
           <div class="contato-item" role="listitem">
-            <span class="contato-icone" aria-hidden="true">
-              <ion-icon name="call-outline"></ion-icon>
-            </span>
+            <a href="tel:+556134497555" class="contato-link contato-icone-link" aria-label="Ligar para (61) 3449-7555">
+              <span class="contato-icone" aria-hidden="true">
+                <ion-icon name="call-outline"></ion-icon>
+              </span>
+            </a>
             <div class="contato-conteudo">
               <strong class="contato-rotulo">Hospital de Apoio de Brasília (Genética)</strong>
-              <p class="contato-valor">(61) 3449-7555 / 3449-7556</p>
+              <p class="contato-valor">
+                <a href="tel:+556134497555" class="contato-link">(61) 3449-7555</a> / <a href="tel:+556134497556" class="contato-link">3449-7556</a>
+              </p>
             </div>
           </div>
 
           <div class="contato-item" role="listitem">
-            <span class="contato-icone" aria-hidden="true">
-              <ion-icon name="logo-whatsapp"></ion-icon>
-            </span>
+            <a href="https://wa.me/556191721842" target="_blank" rel="noopener noreferrer" class="contato-link contato-icone-link" aria-label="Abrir WhatsApp (61) 9172-1842">
+              <span class="contato-icone" aria-hidden="true">
+                <ion-icon name="logo-whatsapp"></ion-icon>
+              </span>
+            </a>
             <div class="contato-conteudo">
               <strong class="contato-rotulo">WhatsApp (HAB)</strong>
-              <p class="contato-valor">(61) 9172-1842 <span class="contato-obs">(apenas mensagens)</span></p>
+              <p class="contato-valor">
+                <a href="https://wa.me/556191721842" target="_blank" rel="noopener noreferrer" class="contato-link">(61) 9172-1842</a> <span class="contato-obs">(apenas mensagens)</span>
+              </p>
             </div>
           </div>
 
           <div class="contato-item" role="listitem">
-            <span class="contato-icone" aria-hidden="true">
-              <ion-icon name="location-outline"></ion-icon>
-            </span>
+            <a href="https://maps.app.goo.gl/zMmAuu5W3MXjcHDs8" target="_blank" rel="noopener noreferrer" class="contato-link contato-icone-link" aria-label="Ver endereço no mapa">
+              <span class="contato-icone" aria-hidden="true">
+                <ion-icon name="location-outline"></ion-icon>
+              </span>
+            </a>
             <div class="contato-conteudo">
               <strong class="contato-rotulo">Endereço</strong>
-              <p class="contato-valor">AENW 03, Lote A, Setor Noroeste, Brasília-DF (próximo ao Hospital da Criança)</p>
+              <p class="contato-valor">
+                <a href="https://maps.app.goo.gl/zMmAuu5W3MXjcHDs8" target="_blank" rel="noopener noreferrer" class="contato-link">AENW 03, Lote A, Setor Noroeste, Brasília-DF</a> (próximo ao Hospital da Criança)
+              </p>
             </div>
           </div>
         </div>
@@ -669,6 +681,29 @@ li {
   .contato-obs {
     font-size: 0.875rem;
     color: #555;
+  }
+
+  .contato-link {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.85;
+      text-decoration: underline;
+    }
+  }
+
+  .contato-icone-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &:hover .contato-icone {
+      opacity: 0.9;
+    }
   }
 }
 
