@@ -248,25 +248,42 @@ const loginPage = () => router.push('/Login');
       </Accordion>
     </section>
 
-    <section id="pag-contatos">
+    <section id="pag-contatos" class="contatos-unidade" aria-labelledby="titulo-contatos">
       <div class="container-contatos">
-        <article id="art-contatos">
-          <h1>Dúvidas?</h1>
-          <p>Vamos te ajudar!</p>
-          <p>Entre em contato conosco.</p>
-        </article>
+        <header class="contatos-header">
+          <h1 id="titulo-contatos">Contatos da Unidade de Genética</h1>
+          <p class="contatos-orgao">Secretaria de Saúde do Distrito Federal</p>
+        </header>
 
-        <div class="contatos-botao">
-          <div class="contato">
-            <span><ion-icon name="logo-whatsapp"></ion-icon></span>
-            <p>WhatsApp</p>
+        <div class="contatos-lista">
+          <div class="contato-item" role="listitem">
+            <span class="contato-icone" aria-hidden="true">
+              <ion-icon name="call-outline"></ion-icon>
+            </span>
+            <div class="contato-conteudo">
+              <strong class="contato-rotulo">Hospital de Apoio de Brasília (Genética)</strong>
+              <p class="contato-valor">(61) 3449-7555 / 3449-7556</p>
+            </div>
           </div>
 
-          <p>Ou ligue</p>
+          <div class="contato-item" role="listitem">
+            <span class="contato-icone" aria-hidden="true">
+              <ion-icon name="logo-whatsapp"></ion-icon>
+            </span>
+            <div class="contato-conteudo">
+              <strong class="contato-rotulo">WhatsApp (HAB)</strong>
+              <p class="contato-valor">(61) 9172-1842 <span class="contato-obs">(apenas mensagens)</span></p>
+            </div>
+          </div>
 
-          <div class="contato">
-            <span><ion-icon name="call-outline"></ion-icon></span>
-            <p>(61) 2017-1259</p>
+          <div class="contato-item" role="listitem">
+            <span class="contato-icone" aria-hidden="true">
+              <ion-icon name="location-outline"></ion-icon>
+            </span>
+            <div class="contato-conteudo">
+              <strong class="contato-rotulo">Endereço</strong>
+              <p class="contato-valor">AENW 03, Lote A, Setor Noroeste, Brasília-DF (próximo ao Hospital da Criança)</p>
+            </div>
           </div>
         </div>
       </div>
@@ -549,85 +566,109 @@ li {
   }
 }
 
-#pag-contatos {
+/* Contatos - ajustando com padrão do govbr ds */
+#pag-contatos.contatos-unidade {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  margin: 20px 20px;
+  margin: 2rem;
+  padding: 2rem 1rem;
 
   .container-contatos {
-    background-color: #e3efff;
-    height: 100%;
-    width: 80%;
-    border-radius: 50px;
-    color: #000;
+    background-color: #f5f9fd;
+    border: 1px solid #c8d9eb;
+    border-radius: 8px;
+    max-width: 720px;
+    width: 100%;
+    padding: 2rem;
+    color: #1351b4;
+    box-shadow: 0 2px 4px rgba(19, 81, 180, 0.08);
+  }
 
-    p {
-      font-size: 1.7rem;
-      font-weight: 400;
+  .contatos-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #1351b4;
+    padding-bottom: 1rem;
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1351b4;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.3;
     }
 
-    #art-contatos {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      p {
-        font-size: 1.7rem;
-        font-weight: 400;
-        text-align: center;
-      }
-
-      h1 {
-        font-size: 2.5rem;
-        font-weight: 450;
-      }
+    .contatos-orgao {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #264a73;
+      margin: 0;
     }
+  }
 
-    .contatos-botao {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 30px;
+  .contatos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-      .contato {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 50px;
-        width: 220px;
-        background-color: #4175b9;
-        border-radius: 30px;
-        padding: 0 20px;
-        position: relative;
-        transition: 0.2s;
+  .contato-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #c8d9eb;
+    border-radius: 6px;
+    transition: box-shadow 0.2s ease;
 
-        &:hover {
-          box-shadow: 2px 2px #aeaeae;
-        }
-
-        span {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-size: 1.3rem;
-          margin-right: 10px;
-        }
-
-        p {
-          color: #fff;
-          font-size: 1.3rem;
-          margin: 0;
-          text-align: center;
-          flex: 1;
-        }
-      }
+    &:hover {
+      box-shadow: 0 2px 8px rgba(19, 81, 180, 0.12);
     }
+  }
+
+  .contato-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    background-color: #1351b4;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 1.25rem;
+  }
+
+  .contato-conteudo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contato-rotulo {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1351b4;
+    margin-bottom: 0.25rem;
+  }
+
+  .contato-valor {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #264a73;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .contato-obs {
+    font-size: 0.875rem;
+    color: #555;
   }
 }
 
@@ -781,12 +822,21 @@ li {
     }
   }
 
-  .contatos {
-    width: 100%;
-    margin: 20px 0;
+  #pag-contatos.contatos-unidade {
+    margin: 1rem;
+    padding: 1rem;
 
-    .contatos-botao {
-      padding: 20px;
+    .container-contatos {
+      padding: 1.25rem;
+    }
+    .contatos-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .contato-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
     }
   }
 
