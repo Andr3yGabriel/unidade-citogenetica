@@ -11,7 +11,9 @@ interface ExamData {
         id: number;
         completeName: string;
         document: string;
-        susNumber: string;
+        sesNumber: string;
+        dateOfBirth?: string;
+        motherName?: string;
         email: string;
     };
     requestingDoctor: {
@@ -277,9 +279,19 @@ export default defineComponent({
                 <span class="info-value">{{ formatCPF(examData.patient.document) }}</span>
               </div>
 
-              <div class="info-item" v-if="examData.patient.susNumber">
-                <label>Número SUS:</label>
-                <span class="info-value">{{ examData.patient.susNumber }}</span>
+              <div class="info-item" v-if="examData.patient.sesNumber">
+                <label>Número SES:</label>
+                <span class="info-value">{{ examData.patient.sesNumber }}</span>
+              </div>
+
+              <div class="info-item" v-if="examData.patient.dateOfBirth">
+                <label>Data de Nascimento:</label>
+                <span class="info-value">{{ new Date(examData.patient.dateOfBirth).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) }}</span>
+              </div>
+
+              <div class="info-item" v-if="examData.patient.motherName">
+                <label>Nome da mãe:</label>
+                <span class="info-value">{{ examData.patient.motherName }}</span>
               </div>
 
               <div class="info-item">

@@ -22,10 +22,22 @@ export default defineComponent({
     const completeName = ref<string>("");
     const email = ref<string>("");
     const document = ref<string>("");
+    const sesNumber = ref<string>("");
+    const dateOfBirth = ref<string>("");
+    const motherName = ref<string>("");
     const password = ref<string>("");
     const confirmPassword = ref<string>("");
 
     const register = async () => {
+      if (!completeName.value || !email.value || !document.value || !sesNumber.value || !dateOfBirth.value || !motherName.value || !password.value) {
+        toast.add({
+          severity: "error",
+          summary: "Erro",
+          detail: "Preencha todos os campos obrigatórios do paciente.",
+        });
+        return;
+      }
+
       if (password.value !== confirmPassword.value) {
         toast.add({
           severity: "error",
@@ -41,6 +53,9 @@ export default defineComponent({
           password: password.value,
           email: email.value,
           document: document.value,
+          sesNumber: sesNumber.value,
+          dateOfBirth: dateOfBirth.value,
+          motherName: motherName.value,
         });
         router.push({ path: "/Login", query: { registered: "true" } });
       } catch (error: any) {
@@ -60,6 +75,9 @@ export default defineComponent({
       confirmPassword,
       email,
       document,
+      sesNumber,
+      dateOfBirth,
+      motherName,
       register,
       goToHome,
     };
@@ -103,6 +121,37 @@ export default defineComponent({
               size="large"
             />
             <label for="document">CPF</label>
+          </FloatLabel>
+          <FloatLabel>
+            <InputText
+              v-tooltip="'Insira seu número SES (Somente números)'"
+              id="sesNumber"
+              v-model="sesNumber"
+              type="text"
+              class="registro-input"
+              size="large"
+            />
+            <label for="sesNumber">Número SES</label>
+          </FloatLabel>
+          <FloatLabel>
+            <InputText
+              id="dateOfBirth"
+              v-model="dateOfBirth"
+              type="date"
+              class="registro-input"
+              size="large"
+            />
+            <label for="dateOfBirth">Data de Nascimento</label>
+          </FloatLabel>
+          <FloatLabel>
+            <InputText
+              id="motherName"
+              v-model="motherName"
+              type="text"
+              class="registro-input"
+              size="large"
+            />
+            <label for="motherName">Nome da mãe</label>
           </FloatLabel>
           <FloatLabel>
             <Password

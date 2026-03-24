@@ -7,6 +7,9 @@ export interface UserAttributes {
     completeName: string;
     email: string;
     document: string;
+    sesNumber?: string | null;
+    dateOfBirth?: Date | null;
+    motherName?: string | null;
     password_hash: string;
     userTypeId: number;
     passwordResetToken?: string | null;
@@ -23,6 +26,9 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public completeName!: string;
     public email!: string;
     public document!: string;
+    public sesNumber?: string;
+    public dateOfBirth?: Date;
+    public motherName?: string;
     public password_hash!: string;
     public userTypeId!: number;
     public passwordResetToken?: string;
@@ -64,6 +70,22 @@ User.init({
         type: DataTypes.STRING(11),
         allowNull: false,
         unique: true
+    },
+    sesNumber: {
+        field: 'numero_ses',
+        type: DataTypes.STRING(15),
+        allowNull: true,
+        unique: true
+    },
+    dateOfBirth: {
+        field: 'data_nascimento',
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
+    motherName: {
+        field: 'nome_mae',
+        type: DataTypes.STRING,
+        allowNull: true
     },
     password_hash: {
         field: 'senha_hash',

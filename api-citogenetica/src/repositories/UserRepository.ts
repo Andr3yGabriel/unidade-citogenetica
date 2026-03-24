@@ -7,6 +7,9 @@ interface UserCreationData {
     password_hash: string;
     email: string;
     document: string;
+    sesNumber?: string;
+    dateOfBirth?: Date;
+    motherName?: string;
     userTypeId: number;
     passwordResetToken?: string;
     passwordResetExpires?: Date;
@@ -32,6 +35,13 @@ class UserRepository {
         const user = await User.findOne({
             where: { document },
             include: [{ model: UserType, as: 'userType', attributes: ['name'] }]
+        });
+        return user;
+    }
+
+    async findUserBySesNumber(sesNumber: string): Promise<User | null> {
+        const user = await User.findOne({
+            where: { sesNumber }
         });
         return user;
     }

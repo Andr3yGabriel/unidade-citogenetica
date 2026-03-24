@@ -13,25 +13,25 @@ class PacienteRepository {
   }
 
   /**
-   * Busca paciente por número SUS (campo 'susNumber' no banco)
+   * Busca paciente por número SES (campo 'sesNumber' no banco)
    */
-  async buscarPorNumeroSus(numeroSus) {
+  async buscarPorNumeroSes(numeroSes) {
     return await User.findOne({
-      where: { susNumber: numeroSus }
+      where: { sesNumber: numeroSes }
     });
   }
 
   /**
-   * Busca unificada: aceita CPF ou número SUS no mesmo campo
+   * Busca unificada: aceita CPF ou número SES no mesmo campo
    */
-  async buscarPorCpfOuSus(termo) {
+  async buscarPorCpfOuSes(termo) {
     const termoLimpo = termo.replace(/[.\-]/g, '');
 
     return await User.findOne({
       where: {
         [Op.or]: [
           { document: termoLimpo },
-          { susNumber: termoLimpo }
+          { sesNumber: termoLimpo }
         ]
       }
     });

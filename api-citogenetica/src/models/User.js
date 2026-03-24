@@ -33,11 +33,21 @@ User.init({
         allowNull: false,
         unique: true
     },
-    susNumber: {
-    field: 'numero_sus',
+    sesNumber: {
+    field: 'numero_ses',
     type: DataTypes.STRING(15),
     allowNull: true,
     unique: true
+    },
+    dateOfBirth: {
+    field: 'data_nascimento',
+    type: DataTypes.DATEONLY,
+    allowNull: true
+    },
+    motherName: {
+    field: 'nome_mae',
+    type: DataTypes.STRING,
+    allowNull: true
     },
     password: {
         field: 'senha_hash',

@@ -89,7 +89,16 @@ router.get('/pacientes/buscar/cpf/:cpf',
 router.get('/pacientes/buscar/sus/:numeroSus',
     authenticateToken,
     authorize(['tecnico', 'medico']),
-    PacienteBuscaController.buscarPorNumeroSus
+    (req, res) => {
+        req.params.numeroSes = req.params.numeroSus;
+        return PacienteBuscaController.buscarPorNumeroSes(req, res);
+    }
+);
+
+router.get('/pacientes/buscar/ses/:numeroSes',
+    authenticateToken,
+    authorize(['tecnico', 'medico']),
+    PacienteBuscaController.buscarPorNumeroSes
 );
 
 // Rota para listar tipos de exame
@@ -323,7 +332,7 @@ router.get('/exams/:examId',
                 include: [
                     { 
                         association: 'patient',
-                        attributes: ['id', 'completeName', 'document', 'susNumber', 'email']
+                        attributes: ['id', 'completeName', 'document', 'sesNumber', 'dateOfBirth', 'motherName', 'email']
                     },
                     { 
                         association: 'requestingDoctor',

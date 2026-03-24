@@ -4,6 +4,7 @@ const { User, UserType } = require('../models');
 const { generateToken } = require('../services');
 const { sendPasswordResetEmail } = require('../services/EmailService');
 const crypto = require('crypto');
+const { Op } = require('sequelize');
 
 class AuthController {
     /**
@@ -11,7 +12,12 @@ class AuthController {
      */
     static async patientRegister(req, res) {
         try {
-            const { completeName, password, email, document, susNumber } = req.body;
+            const { completeName, password, email, document, sesNumber, dateOfBirth, motherName } = req.body;
+            if (!completeName || !password || !email || !document || !sesNumber || !dateOfBirth || !motherName) {
+                return res.status(400).json({
+                    message: 'Dados obrigatórios ausentes. Informe nome, data de nascimento, número SES, nome da mãe, email, CPF e senha.'
+                });
+            }
 
             const patientType = await UserType.findOne({ where: { name: 'paciente' } });
             if (!patientType) return res.status(500).json({ message: 'Configuração de papel "paciente" não encontrada.' });
@@ -19,12 +25,30 @@ class AuthController {
             const existingUser = await User.findOne({ where: { email } });
             if (existingUser) return res.status(409).json({ message: 'Este e-mail já está em uso.' });
 
+            const existingSes = await User.findOne({ where: { sesNumber } });
+            if (existingSes) return res.status(409).json({ message: 'Este número SES já está em uso.' });
+
+            const existingPatientByIdentity = await User.findOne({
+                where: {
+                    userTypeId: patientType.id,
+                    dateOfBirth,
+                    motherName: { [Op.iLike]: motherName.trim() }
+                }
+            });
+            if (existingPatientByIdentity) {
+                return res.status(409).json({
+                    message: 'Já existe paciente cadastrado com a mesma data de nascimento e nome da mãe.'
+                });
+            }
+
             const newUser = await User.create({
                 completeName,
                 password,
                 email,
                 document,
-                susNumber,
+                sesNumber,
+                dateOfBirth,
+                motherName: motherName.trim(),
                 userTypeId: patientType.id
             });
 

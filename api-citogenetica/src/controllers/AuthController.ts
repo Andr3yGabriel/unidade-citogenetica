@@ -3,11 +3,20 @@ import UserRepository from '../repositories/UserRepository';
 import { generateToken } from '../services';
 import { sendPasswordResetEmail } from '../services/EmailService';
 import crypto from 'crypto';
+import User from '../models/User';
+import { Op } from 'sequelize';
 
 class AuthController {
     static async patientRegister(req: Request, res: Response): Promise<void> {
         try {
-            const { completeName, password, email, document } = req.body;
+            const { completeName, password, email, document, sesNumber, dateOfBirth, motherName } = req.body;
+            if (!completeName || !password || !email || !document || !sesNumber || !dateOfBirth || !motherName) {
+                res.status(400).json({
+                    message: 'Dados obrigatórios ausentes. Informe nome, data de nascimento, número SES, nome da mãe, email, CPF e senha.'
+                });
+                return;
+            }
+
             const userType = await UserRepository.findUserTypeByName('paciente');
             if (!userType) {
                 res.status(500).json({ message: 'Tipo de usuário "paciente" não encontrado.' });
@@ -20,7 +29,36 @@ class AuthController {
                 return;
             }
 
-            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, document, userTypeId: userType.id });
+            const existingSes = await UserRepository.findUserBySesNumber(sesNumber);
+            if (existingSes) {
+                res.status(409).json({ message: 'Este número SES já está em uso.' });
+                return;
+            }
+
+            const existingPatientByIdentity = await User.findOne({
+                where: {
+                    userTypeId: userType.id,
+                    dateOfBirth,
+                    motherName: { [Op.iLike]: motherName.trim() }
+                }
+            });
+            if (existingPatientByIdentity) {
+                res.status(409).json({
+                    message: 'Já existe paciente cadastrado com a mesma data de nascimento e nome da mãe.'
+                });
+                return;
+            }
+
+            await UserRepository.createUser({
+                completeName,
+                password_hash: password,
+                email,
+                document,
+                sesNumber,
+                dateOfBirth: new Date(dateOfBirth),
+                motherName: motherName.trim(),
+                userTypeId: userType.id
+            });
             res.status(201).json({ message: 'Paciente registrado com sucesso!' });
         } catch (error: any) {
             res.status(500).json({ message: 'Erro inesperado ao registrar paciente.', error: error.message });

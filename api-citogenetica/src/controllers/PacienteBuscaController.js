@@ -4,7 +4,7 @@ const pacienteRepository = require('../repositories/PacienteRepository');
 
 class PacienteBuscaController {
   /**
-   * Busca unificada por CPF ou número SUS
+   * Busca unificada por CPF ou número SES
    * Médico: apenas pacientes que ele atendeu
    * Técnico: todos os pacientes
    */
@@ -16,7 +16,7 @@ class PacienteBuscaController {
       if (!termo) {
         return res.status(400).json({
           erro: 'Parâmetro de busca não informado',
-          mensagem: 'Informe um CPF ou número SUS para buscar'
+          mensagem: 'Informe um CPF ou número SES para buscar'
         });
       }
 
@@ -25,11 +25,11 @@ class PacienteBuscaController {
       if (termoLimpo.length < 11) {
         return res.status(400).json({
           erro: 'Termo de busca inválido',
-          mensagem: 'CPF ou número SUS deve ter no mínimo 11 caracteres'
+          mensagem: 'CPF ou número SES deve ter no mínimo 11 caracteres'
         });
       }
 
-      const paciente = await pacienteRepository.buscarPorCpfOuSus(termoLimpo);
+      const paciente = await pacienteRepository.buscarPorCpfOuSes(termoLimpo);
 
       if (!paciente) {
         return res.status(404).json({
@@ -61,7 +61,9 @@ class PacienteBuscaController {
         completeName: paciente.completeName,
         email: paciente.email,
         document: paciente.document,
-        susNumber: paciente.susNumber,
+        sesNumber: paciente.sesNumber,
+        dateOfBirth: paciente.dateOfBirth,
+        motherName: paciente.motherName
       };
 
       return res.status(200).json({
@@ -101,26 +103,26 @@ class PacienteBuscaController {
     }
   }
 
-  async buscarPorNumeroSus(req, res) {
+  async buscarPorNumeroSes(req, res) {
     try {
-      const { numeroSus } = req.params;
+      const { numeroSes } = req.params;
 
-      if (!numeroSus) {
-        return res.status(400).json({ erro: 'Número SUS não informado' });
+      if (!numeroSes) {
+        return res.status(400).json({ erro: 'Número SES não informado' });
       }
 
-      const paciente = await pacienteRepository.buscarPorNumeroSus(numeroSus);
+      const paciente = await pacienteRepository.buscarPorNumeroSes(numeroSes);
 
       if (!paciente) {
         return res.status(404).json({
           erro: 'Paciente não encontrado',
-          mensagem: 'Nenhum paciente foi encontrado com o número SUS informado'
+          mensagem: 'Nenhum paciente foi encontrado com o número SES informado'
         });
       }
 
       return res.status(200).json({ sucesso: true, paciente });
     } catch (error) {
-      console.error('Erro ao buscar paciente por número SUS:', error);
+      console.error('Erro ao buscar paciente por número SES:', error);
       return res.status(500).json({ erro: 'Erro interno do servidor' });
     }
   }
