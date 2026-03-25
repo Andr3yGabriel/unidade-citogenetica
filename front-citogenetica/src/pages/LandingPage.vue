@@ -12,67 +12,46 @@ const loginPage = () => router.push('/Login');
 
 <template>
   <div class="page-container">
+
+    <!-- HEADER -->
     <header id="header-home">
-      <section>
+      <section class="header-text">
         <h1>UNIDADE DE GENÉTICA</h1>
         <h2>UGEN - DF</h2>
       </section>
       <img src="../assets/logogdf_1.svg" alt="Logo do GDF, fundo azul e ipê amarelo" />
     </header>
+
+    <!-- NAV -->
     <nav>
       <a class="a-menu" href="#home-main">SOBRE</a>
       <a class="a-menu" href="#pag-unidades">UNIDADES</a>
       <a class="a-menu" href="#pag-perguntas">PERGUNTAS FREQUENTES</a>
       <a class="a-menu" href="#pag-contatos">CONTATOS</a>
-      <a class="a-menu" @click="loginPage">LOGIN</a>
+      <a class="a-menu btn-login" @click="loginPage">LOGIN</a>
     </nav>
 
+    <!-- MAIN: SOBRE -->
     <main id="home-main">
-      <h2>Conheça a Unidade Genética</h2>
+      <h2>Conheça a Unidade de Genética</h2>
 
       <article>
         <p>
-          O Laboratório de Citogenética é especializado no estudo dos cromossomos,
-          abrangendo sua estrutura, função, comportamento e patologias associadas.
-          Esta área científica emergiu da integração da citologia, que analisa a
-          célula, com a genética, que investiga a hereditariedade e a variação
-          genética.
+          Obedecendo à Diretriz de Atenção Integral aos pacientes com Doenças Raras
+          preconizada pela <strong>Portaria 199 do Ministério da Saúde</strong>, a Unidade de Genética do
+          Hospital de Apoio presta atendimento para pacientes com doenças genéticas,
+          hereditárias ou raras — o que inclui as malformações congênitas, deficiência
+          intelectual, distúrbios de comportamento, erros inatos do metabolismo, distúrbios de
+          diferenciação sexual, baixa estatura, doenças neurodegenerativas, além de câncer
+          familiar e infertilidade conjugal.
         </p>
         <br />
-
         <p>
-          A principal missão do laboratório é aprofundar o conhecimento sobre a
-          célula, possibilitando avanços significativos na compreensão de doenças
-          genéticas e suas implicações. Para atingir esses objetivos, o
-          laboratório foi projetado para incorporar três unidades funcionais
-          distintas e um ambulatório, permitindo um fluxo de trabalho integrado e
-          eficiente. Entre suas funções estão:
-        </p>
-        <br />
-
-        <ul>
-          <li>
-            <strong>Armazenamento e análise de exames de pacientes:</strong>
-            Manter registros detalhados e organizados para consultas e estudos
-            futuros.
-          </li>
-          <li>
-            <strong>Viabilização da visualização dos exames:</strong> Utilizar
-            tecnologias avançadas para a análise precisa dos cromossomos e suas
-            alterações.
-          </li>
-          <li>
-            <strong>Melhorar o acesso aos exames:</strong> Garantir que os
-            resultados estejam prontamente disponíveis para médicos e pacientes,
-            facilitando o diagnóstico e o tratamento.
-          </li>
-          <br />
-        </ul>
-
-        <p>
-          Este enfoque integrado e estruturado visa aprimorar a pesquisa e o
-          atendimento na área de citogenética, contribuindo para avanços na
-          medicina e na ciência genética.
+          Para o atendimento dessas doenças é necessária a atuação de uma equipe
+          multidisciplinar. Por ser o <strong>Centro de Referência de Doenças Raras</strong>, a Unidade de
+          Genética atende a demanda de pacientes procedentes do Distrito Federal, entorno e
+          até de outros estados. Além disso, o serviço de genética atende os pacientes com
+          alteração na triagem neonatal (teste do pezinho).
         </p>
       </article>
 
@@ -102,30 +81,16 @@ const loginPage = () => router.push('/Login');
       </div>
     </main>
 
-    <!--PARTE: UNIDADES-->
+    <!-- UNIDADES -->
     <section id="pag-unidades">
       <h2>Unidades</h2>
 
       <div id="container-unidades">
-        <!--<div class="separacao">-->
-        <!--UNIDADE1-->
+        <!-- UNIDADE 1: Genética Clínica (era a 2ª) -->
         <div class="card-unidades">
-          <div>
-            <img class="logo-unidade" src="../assets/teste-pezinho.jpeg" />
+          <div class="card-img-wrap">
+            <img class="logo-unidade" src="../assets/genetica-clinica.jpeg" />
           </div>
-          <div class="coluna-texto-unidade">
-            <p>
-              O Laboratório de Triagem Neonatal realiza o teste do pezinho no
-              Distrito Federal para identificar precocemente doenças graves em
-              recém-nascidos. O objetivo é detectar essas condições antes que se
-              tornem sintomáticas, permitindo tratamento oportuno que pode
-              prevenir sequelas e até mesmo a morte.
-            </p>
-          </div>
-        </div>
-
-        <!--UNIDADE2-->
-        <div class="card-unidades">
           <div class="coluna-texto-unidade">
             <p>
               A Unidade de Genética do Hospital de Apoio segue a Portaria 199 do
@@ -137,18 +102,28 @@ const loginPage = () => router.push('/Login');
               conjugal.
             </p>
           </div>
-          <div>
-            <img class="logo-unidade" src="../assets/genetica-clinica.jpeg" />
+        </div>
+
+        <!-- UNIDADE 2: Triagem Neonatal -->
+        <div class="card-unidades">
+          <div class="coluna-texto-unidade">
+            <p>
+              O Laboratório de Triagem Neonatal realiza o teste do pezinho no
+              Distrito Federal para identificar precocemente doenças graves em
+              recém-nascidos. O objetivo é detectar essas condições antes que se
+              tornem sintomáticas, permitindo tratamento oportuno que pode
+              prevenir sequelas e até mesmo a morte.
+            </p>
+          </div>
+          <div class="card-img-wrap">
+            <img class="logo-unidade" src="../assets/teste-pezinho.jpeg" />
           </div>
         </div>
 
-        <!--UNIDADE3-->
+        <!-- UNIDADE 3: Citogenética -->
         <div class="card-unidades">
-          <div>
-            <img
-              class="logo-unidade"
-              src="../assets/laboratorio-citogenetica.png"
-            />
+          <div class="card-img-wrap">
+            <img class="logo-unidade" src="../assets/laboratorio-citogenetica.png" />
           </div>
           <div class="coluna-texto-unidade">
             <p>
@@ -162,7 +137,7 @@ const loginPage = () => router.push('/Login');
           </div>
         </div>
 
-        <!--UNIDADE4-->
+        <!-- UNIDADE 4: Biologia Molecular -->
         <div class="card-unidades">
           <div class="coluna-texto-unidade">
             <p>
@@ -173,110 +148,130 @@ const loginPage = () => router.push('/Login');
               câncer hereditário, conforme leis distritais e nacionais.
             </p>
           </div>
-          <div>
+          <div class="card-img-wrap">
             <img class="logo-unidade" src="../assets/biologia-molecular.jpeg" />
           </div>
         </div>
       </div>
     </section>
 
-    <!--PARTE: COMO CHEGAR-->
-
+    <!-- COMO CHEGAR -->
     <section id="pag-como-chegar">
       <h1>Como Chegar?</h1>
-      <section id="info-loc">
-        <!--imagem do boneco-->
-        <img src="../assets/boneco-mapa.png" alt="Boneco segurando um mapa" />
 
-        <!--endereço em texto-->
+      <div class="como-chegar-inner">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3839.8597016877234!2d-47.91793562487062!3d-15.75855948487688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a3a05913e99cd%3A0x170d1b94bead74ee!2sHospital%20de%20Apoio%20de%20Bras%C3%ADlia!5e0!3m2!1spt-BR!2sbr!4v1724723551639!5m2!1spt-BR!2sbr"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
-      </section>
-      <div class="texto-endereço">
-        <p>
-          AENW 3 Lote A Setor Noroeste, Brasília - DF<br />Ao lado do Hospital da
-          Criança<br />Atendimento Laboratorial em Citogenética
-        </p>
-      </div>
-    </section>
 
-    <section id="pag-perguntas">
-      <h1>Perguntas Frequentes</h1>
-
-      <Accordion value="0">
-        <AccordionPanel value="0" style="width: 1000px;">
-          <AccordionHeader>1. Como agendar consulta para Genética Médica?</AccordionHeader>
-          <AccordionContent>
-            <p>
-              A consulta é agendada pela Central de Regulação. Precisa ter
-              solicitação médica e ser inserida na regulação em uma unidade básica
-              de saúde mais próxima de sua residência.
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-        <AccordionPanel value="1" style="width: 1000px;">
-          <AccordionHeader>2. Como marcar o retorno da consulta?</AccordionHeader>
-          <AccordionContent>
-            <p>
-              Mandar mensagem de WhatsApp, com nome do paciente, SES e nome do
-              profissional, para o telefone: (61) 9172-1842 e aguardar retorno.
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-        <AccordionPanel value="2" style="width: 1000px;">
-          <AccordionHeader>3. Como pegar o resultado do cariótipo, x-frágil e MLPA?</AccordionHeader>
-          <AccordionContent>
-            <p>
-              Os exames da Genética são confidenciais, por isso os resultados são
-              entregues pelo médico, no momento da consilta de retorno e do
-              aconselhamento genético.
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-        <AccordionPanel value="3" style="width: 1000px;">
-          <AccordionHeader>4. Como pegar o resultado do teste do pezinho?</AccordionHeader>
-          <AccordionContent>
-            <p>
-              Pelo site da Secretaria de Saúde - Saúde da Criança - Teste do
-              pezinho.
-            </p>
-          </AccordionContent>
-        </AccordionPanel>
-      </Accordion>
-    </section>
-
-    <section id="pag-contatos">
-      <div class="container-contatos">
-        <article id="art-contatos">
-          <h1>Dúvidas?</h1>
-          <p>Vamos te ajudar!</p>
-          <p>Entre em contato conosco.</p>
-        </article>
-
-        <div class="contatos-botao">
-          <div class="contato">
-            <span><ion-icon name="logo-whatsapp"></ion-icon></span>
-            <p>WhatsApp</p>
+        <div class="endereco-card">
+          <div class="endereco-icone">
+            <ion-icon name="location-outline"></ion-icon>
           </div>
-
-          <p>Ou ligue</p>
-
-          <div class="contato">
-            <span><ion-icon name="call-outline"></ion-icon></span>
-            <p>(61) 2017-1259</p>
+          <div class="endereco-texto">
+            <p class="endereco-titulo">Endereço</p>
+            <p class="endereco-principal">AENW 03, Lote A<br />Setor Noroeste, Brasília - DF</p>
+            <p class="endereco-detalhe">Próximo ao Hospital da Criança</p>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- PERGUNTAS FREQUENTES -->
+    <section id="pag-perguntas">
+      <h1>Perguntas Frequentes</h1>
+
+      <div class="accordion-wrap">
+        <Accordion value="0">
+          <AccordionPanel value="0">
+            <AccordionHeader>1. Como agendar consulta para Genética Médica?</AccordionHeader>
+            <AccordionContent>
+              <p>
+                A consulta é agendada pela Central de Regulação. Precisa ter
+                solicitação médica e ser inserida na regulação em uma unidade básica
+                de saúde mais próxima de sua residência.
+              </p>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="1">
+            <AccordionHeader>2. Como marcar o retorno da consulta?</AccordionHeader>
+            <AccordionContent>
+              <p>
+                Mandar mensagem de WhatsApp, com nome do paciente, SES e nome do
+                profissional, para o telefone: <strong>(61) 9172-1842</strong> e aguardar retorno.
+              </p>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="2">
+            <AccordionHeader>3. Como pegar o resultado do cariótipo, X-frágil e MLPA?</AccordionHeader>
+            <AccordionContent>
+              <p>
+                Os exames da Genética são confidenciais, por isso os resultados são
+                entregues pelo médico no momento da consulta de retorno e do
+                aconselhamento genético.
+              </p>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel value="3">
+            <AccordionHeader>4. Como pegar o resultado do teste do pezinho?</AccordionHeader>
+            <AccordionContent>
+              <p>
+                Pelo site da Secretaria de Saúde — Saúde da Criança — Teste do Pezinho.
+              </p>
+            </AccordionContent>
+          </AccordionPanel>
+        </Accordion>
+      </div>
+    </section>
+
+    <!-- CONTATOS -->
+    <section id="pag-contatos">
+      <div class="container-contatos">
+        <article id="art-contatos">
+          <h1>Dúvidas?</h1>
+          <p>Entre em contato conosco.</p>
+        </article>
+
+        <div class="contatos-lista">
+          <div class="contato-item">
+            <span class="contato-icone"><ion-icon name="logo-whatsapp"></ion-icon></span>
+            <div>
+              <p class="contato-label">WhatsApp (apenas mensagens)</p>
+              <p class="contato-valor">(61) 9172-1842</p>
+            </div>
+          </div>
+
+          <div class="divisor">ou</div>
+
+          <div class="contato-item">
+            <span class="contato-icone"><ion-icon name="call-outline"></ion-icon></span>
+            <div>
+              <p class="contato-label">Telefone — Hospital de Apoio (Genética)</p>
+              <p class="contato-valor">(61) 3449-7555 / 3449-7556</p>
+            </div>
+          </div>
+
+          <div class="divisor">ou</div>
+
+          <div class="contato-item">
+            <span class="contato-icone"><ion-icon name="location-outline"></ion-icon></span>
+            <div>
+              <p class="contato-label">Endereço</p>
+              <p class="contato-valor">AENW 03, Lote A, Setor Noroeste, Brasília-DF</p>
+              <p class="contato-obs">Próximo ao Hospital da Criança</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RODAPÉ DE LOGOS -->
     <section class="logo-rodape">
-      <img src="../assets/logo-unidade.jpg" />
-      <img src="../assets/laboratorio-citogenetica.png" />
-      <img src="../assets/logo-gdf.png" />
-      <img src="../assets/logo-sus.png" />
+      <img src="../assets/logo-unidade.jpg" alt="Logo da Unidade de Genética" />
+      <img src="../assets/logo-gdf.png" alt="Logo do GDF" />
+      <img src="../assets/logo-sus.png" alt="Logo do SUS" />
     </section>
 
     <AppFooter />
@@ -286,59 +281,107 @@ const loginPage = () => router.push('/Login');
 <style lang="scss" scoped>
 @use '../assets/styles/variables' as *;
 
+/* ==============================
+   RESET / BASE
+============================== */
 .page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ==============================
+   HEADER
+============================== */
 #header-home {
   display: flex;
   justify-content: space-between;
-  padding: 0px 30px;
+  padding: 24px 40px;
   align-items: center;
-  background-color: #488bbf;
+  background: linear-gradient(135deg, #2a6fa8 0%, #488bbf 60%, #5ba3d4 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 
   img {
-    height: 160px;
-    width: 250px;
+    height: 140px;
+    width: 220px;
+    object-fit: contain;
+  }
+
+  .header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   h1 {
-    font-weight: 500;
-    font-size: 2.5rem;
+    font-weight: 700;
+    font-size: 2.4rem;
     color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
   }
 
   h2 {
-    font-weight: 500;
-    font-size: 2.3rem;
-    color: #fff;
+    font-weight: 300;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.12em;
   }
 }
 
+/* ==============================
+   NAV
+============================== */
 nav {
   display: flex;
   background-color: $primary-color;
-  padding: 20px;
+  padding: 0 40px;
   justify-content: center;
   align-items: center;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .a-menu {
-  margin: 0px 60px;
-  font-size: 1.2em;
-  color: #fff;
+  margin: 0 36px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
-  font-weight: 300;
-  transition: 0.2s;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s, border-bottom 0.2s;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
 
   &:hover {
-    color: #000;
+    color: #fff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+  }
+
+  &.btn-login {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 6px 20px;
+    margin-left: 20px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.28);
+      border-bottom: 2px solid transparent;
+    }
   }
 }
 
+/* ==============================
+   MAIN: SOBRE
+============================== */
 main {
   flex-grow: 1;
 }
@@ -346,8 +389,8 @@ main {
 #home-main {
   display: flex;
   width: 100%;
-  background-color: #fff;
-  padding: 20px;
+  background-color: #f8fbff;
+  padding: 60px 20px;
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
@@ -355,450 +398,547 @@ main {
 
   h2 {
     text-align: center;
-    font-weight: 500;
-    font-size: 2.5rem;
-    color: rgba(0, 0, 0, 0.63);
+    font-weight: 600;
+    font-size: 2.2rem;
+    color: #1a4e7a;
+    margin-bottom: 16px;
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background-color: #488bbf;
+      margin: 14px auto 0;
+      border-radius: 2px;
+    }
   }
 
   article {
-    padding: 50px;
+    max-width: 860px;
+    padding: 32px 20px 0;
 
     p {
-      font-size: 1.1rem;
-      color: #000;
+      font-size: 1.07rem;
+      color: #333;
       text-align: justify;
-      font-weight: 350;
+      font-weight: 400;
+      line-height: 1.75;
     }
   }
 }
 
-ul {
-  list-style-type: circle;
-  padding: 20px 50px;
-}
-
-li {
-  font-size: 1.1rem;
-  color: #000;
-  margin-bottom: 10px;
-  text-align: justify;
-}
-
+/* Cards de destaque */
 #container {
   display: flex;
-  margin-top: 15px;
-  margin-bottom: 20px;
-  width: fit-content;
-  align-items: center;
-  justify-content: space-around;
+  margin-top: 48px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 28px;
+  padding: 0 20px;
 
   .card-info {
     background-color: $primary-color;
-    margin: 10px;
-    width: 350px;
-    height: 500px;
-    border-radius: 25px;
-    box-shadow: 0px 4px 8px #404040;
-    transition: 0.3s;
+    width: 300px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(72, 139, 191, 0.25);
+    transition: transform 0.25s, box-shadow 0.25s;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px 50px;
+    overflow: hidden;
 
     &:hover {
-      box-shadow: 8px 16px 26px #ccc;
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(72, 139, 191, 0.35);
     }
 
     .imagem-card {
-      width: 350px;
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
     }
 
     .text-card {
       display: flex;
       justify-content: center;
       align-items: center;
-      text-align: justify;
-      padding: 10px;
-      height: 100px;
+      text-align: center;
+      padding: 20px 16px;
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       font-weight: 400;
+      line-height: 1.5;
     }
   }
 }
 
+/* ==============================
+   UNIDADES
+============================== */
 #pag-unidades {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background-color: $primary-color;
+  padding: 60px 20px 80px;
 
   h2 {
     color: #fff;
-    font-weight: 400;
-    font-size: 2.7rem;
-    margin: 80px 0px 40px 0px;
+    font-weight: 600;
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: rgba(255, 255, 255, 0.6);
+      margin: 12px auto 0;
+      border-radius: 2px;
+    }
   }
 
   #container-unidades {
     display: flex;
-    width: 850px;
-    height: fit-content;
+    max-width: 900px;
+    width: 100%;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 40px 0px 80px 0px;
+    align-items: stretch;
+    margin-top: 40px;
+    gap: 20px;
 
     .card-unidades {
       display: flex;
       background-color: #fff;
       align-items: center;
-      justify-content: end;
-      margin: 20px 20px;
-      border-radius: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      transition: box-shadow 0.25s;
+
+      &:hover {
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+      }
+
+      .card-img-wrap {
+        flex-shrink: 0;
+      }
 
       .logo-unidade {
-        width: 300px;
-        height: 300px;
-        padding: 20px;
+        width: 280px;
+        height: 280px;
+        object-fit: cover;
+        object-position: center;
+        display: block;
       }
 
       .coluna-texto-unidade {
+        flex: 1;
         p {
           text-align: justify;
-          padding: 30px;
-          font-size: 1.1rem;
-          color: #000;
+          padding: 28px 32px;
+          font-size: 1.02rem;
+          color: #333;
+          line-height: 1.7;
         }
       }
     }
   }
 }
 
+/* ==============================
+   COMO CHEGAR
+============================== */
 #pag-como-chegar {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 60px 20px;
+  background-color: #f8fbff;
 
   h1 {
-    color: rgba(0, 0, 0, 0.67);
-    font-weight: 500;
+    color: #1a4e7a;
+    font-weight: 600;
     font-size: 2.2rem;
-    margin: 40px;
+    margin-bottom: 40px;
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #488bbf;
+      margin: 12px auto 0;
+      border-radius: 2px;
+    }
+  }
+
+  .como-chegar-inner {
+    display: flex;
+    align-items: stretch;
+    gap: 32px;
+    width: 100%;
+    max-width: 1000px;
   }
 
   iframe {
-    width: 700px;
-    height: 450px;
-    border-radius: 15px;
+    flex: 1;
+    min-width: 0;
+    height: 380px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   }
 
-  #info-loc {
+  .endereco-card {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 90vw;
-    justify-content: space-between;
-
-    img {
-      height: 400px;
-      width: 500px;
-    }
-
-    h2 {
-      background-color: #e6e6e6;
-      font-weight: 400;
-      text-align: center;
-      padding: 10px;
-      border-radius: 10px;
-    }
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    background-color: #fff;
+    border: 1px solid #ddeaf8;
+    border-radius: 16px;
+    padding: 36px 28px;
+    box-shadow: 0 4px 16px rgba(72, 139, 191, 0.12);
+    min-width: 240px;
+    max-width: 280px;
   }
 
-  .texto-endereço {
-    background-color: #4685b6;
-    margin: 50px;
-    border-radius: 10px;
+  .endereco-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background-color: #e3efff;
+    border-radius: 14px;
+    color: #2a6fa8;
+    font-size: 1.6rem;
+  }
 
-    p {
-      color: #fff;
-      padding: 30px;
-      font-size: 1.1rem;
-    }
+  .endereco-titulo {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8eaac8;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .endereco-principal {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a4e7a;
+    line-height: 1.5;
+    margin: 4px 0 0;
+  }
+
+  .endereco-detalhe {
+    font-size: 0.9rem;
+    color: #7a9ab8;
+    margin: 4px 0 0;
   }
 }
 
+/* ==============================
+   PERGUNTAS FREQUENTES
+============================== */
 #pag-perguntas {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: $primary-color;
-  height: 700px;
+  padding: 60px 20px 72px;
 
   h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: #fff;
-    font-weight: 450;
-    margin-bottom: 40px;
+    font-weight: 600;
+    margin-bottom: 36px;
+    position: relative;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: rgba(255, 255, 255, 0.6);
+      margin: 12px auto 0;
+      border-radius: 2px;
+    }
   }
 
-  p {
-    font-size: 1.1rem;
+  .accordion-wrap {
+    width: 100%;
+    max-width: 860px;
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #333;
+    }
   }
 }
 
+/* ==============================
+   CONTATOS
+============================== */
 #pag-contatos {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  margin: 20px 20px;
+  padding: 60px 20px;
+  background-color: #f8fbff;
 
   .container-contatos {
-    background-color: #e3efff;
-    height: 100%;
-    width: 80%;
-    border-radius: 50px;
-    color: #000;
+    background-color: #fff;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 20px;
+    box-shadow: 0 6px 28px rgba(72, 139, 191, 0.15);
+    padding: 48px 40px;
+    border: 1px solid #e0ecf8;
+  }
+
+  #art-contatos {
+    text-align: center;
+    margin-bottom: 36px;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a4e7a;
+      margin-bottom: 6px;
+    }
 
     p {
-      font-size: 1.7rem;
-      font-weight: 400;
+      font-size: 1.1rem;
+      color: #555;
     }
+  }
 
-    #art-contatos {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+  .contatos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
 
-      p {
-        font-size: 1.7rem;
-        font-weight: 400;
-        text-align: center;
-      }
+  .contato-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 20px 0;
+    border-bottom: 1px solid #edf2f8;
 
-      h1 {
-        font-size: 2.5rem;
-        font-weight: 450;
-      }
+    &:last-child {
+      border-bottom: none;
     }
+  }
 
-    .contatos-botao {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 30px;
+  .contato-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e3efff;
+    color: #2a6fa8;
+    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
 
-      .contato {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 50px;
-        width: 220px;
-        background-color: #4175b9;
-        border-radius: 30px;
-        padding: 0 20px;
-        position: relative;
-        transition: 0.2s;
+  .contato-label {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin: 0 0 4px;
+  }
 
-        &:hover {
-          box-shadow: 2px 2px #aeaeae;
-        }
+  .contato-valor {
+    font-size: 1.05rem;
+    color: #1a4e7a;
+    font-weight: 600;
+    margin: 0;
+  }
 
-        span {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-size: 1.3rem;
-          margin-right: 10px;
-        }
+  .contato-obs {
+    font-size: 0.88rem;
+    color: #888;
+    margin: 2px 0 0;
+  }
 
-        p {
-          color: #fff;
-          font-size: 1.3rem;
-          margin: 0;
-          text-align: center;
-          flex: 1;
-        }
-      }
-    }
+  .divisor {
+    text-align: center;
+    color: #aac4e0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 0;
   }
 }
 
+/* ==============================
+   RODAPÉ DE LOGOS
+============================== */
 .logo-rodape {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
+  gap: 40px;
+  padding: 32px 20px;
+  background-color: #fff;
+  border-top: 1px solid #e5edf5;
 
   img {
-    max-height: 100px;
+    max-height: 90px;
+    max-width: 160px;
     object-fit: contain;
+    filter: grayscale(15%);
+    opacity: 0.88;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
+/* ==============================
+   RESPONSIVO
+============================== */
 @media (max-width: 1024px) {
   #header-home {
     flex-direction: column;
-    width: 100%;
-    padding: 10px;
+    text-align: center;
+    padding: 24px 16px;
+    gap: 16px;
 
     img {
-      height: 120px;
-      width: 200px;
+      height: 110px;
+      width: auto;
     }
 
-    h1,
-    h2 {
-      font-size: 1.8rem;
-      text-align: center;
-    }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.2rem; }
   }
 
   nav {
-    flex-direction: column;
-    width: 100%;
-    padding: 10px;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 16px;
+    gap: 8px;
   }
 
   .a-menu {
-    margin: 10px 0px;
+    margin: 4px 12px;
+    font-size: 0.78rem;
   }
 
   #home-main {
-    padding: 10px;
+    padding: 40px 16px;
 
-    h2 {
-      font-size: 2rem;
-    }
+    h2 { font-size: 1.8rem; }
 
     article {
-      padding: 20px;
+      padding: 20px 0 0;
     }
-  }
-
-  ul {
-    padding: 10px;
   }
 
   #container {
-    flex-direction: column;
-    margin: 0;
+    gap: 16px;
 
-    .card {
-      width: 300px;
-      height: auto;
-      margin: 10px;
-
-      .imagem-card {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
-        margin: 0 auto;
-      }
-
-      .main-card-content {
-        width: 100%;
-      }
+    .card-info {
+      width: 280px;
     }
   }
 
   #pag-unidades {
-    width: 100%;
-
     #container-unidades {
-      width: 100%;
+      max-width: 100%;
 
       .card-unidades {
         flex-direction: column;
-        margin: 10px;
 
         .logo-unidade {
           width: 100%;
-          max-width: 250px;
-          height: auto;
+          height: 220px;
+          object-fit: cover;
+          object-position: center top;
         }
 
-        .coluna-texto-unidade h2,
-        p {
-          padding: 10px;
-          font-size: 1rem;  
-          color: #000;
+        .coluna-texto-unidade p {
+          padding: 20px;
         }
       }
     }
   }
 
   #pag-como-chegar {
-    justify-content: center;
-    align-items: center;
+    .como-chegar-inner {
+      flex-direction: column;
+    }
 
     iframe {
       width: 100%;
       height: 300px;
     }
-  }
 
-  #info-loc {
-    flex-direction: column;
-    width: 100%;
-    img {
-      width: 100%;
-      margin: 20px 0;
+    .endereco-card {
+      max-width: 100%;
+      min-width: unset;
+      flex-direction: row;
+      align-items: center;
+      padding: 24px 20px;
     }
   }
 
-  .texto-endereço {
-    width: 100%;
-    margin: 20px 0;
+  #pag-perguntas {
+    padding: 48px 16px 56px;
   }
 
-  #pag-perguntas,
-  #pag-duvidas {
-    padding: 10px;
-    height: auto;
-    width: 100%;
-
-    .card-perguntas {
-      width: 90%;
-      max-width: 400px;
-      margin: 10px auto;
-      padding: 8px;
-      height: auto;
-    }
-
-    .container-duvida {
-      width: 100%;
-      height: auto;
-      padding: 20px;
-    }
-  }
-
-  .contatos {
-    width: 100%;
-    margin: 20px 0;
-
-    .contatos-botao {
-      padding: 20px;
+  #pag-contatos {
+    .container-contatos {
+      padding: 32px 20px;
     }
   }
 
   .logo-rodape {
-    padding: 10px;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  #header-home h1 { font-size: 1.4rem; }
+  #header-home h2 { font-size: 1rem; }
+
+  .a-menu { font-size: 0.72rem; margin: 4px 8px; }
+
+  #home-main h2,
+  #pag-unidades h2,
+  #pag-como-chegar h1,
+  #pag-perguntas h1 {
+    font-size: 1.6rem;
   }
 
-  footer {
-    flex-direction: column;
-    height: auto;
-    padding: 10px;
+  #container .card-info {
+    width: 100%;
+    max-width: 340px;
   }
 }
 </style>

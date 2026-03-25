@@ -1,7 +1,6 @@
-api-citogenetica/.env
+.env
 api-citogenetica/node_modules
 api-citogenetica/dist
 api-citogenetica/package-lock.json
 front-citogenetica/node_modules
 front-citogenetica/package-lock.json
-front-citogenetica/.env
