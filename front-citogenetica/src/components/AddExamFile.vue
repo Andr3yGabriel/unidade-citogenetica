@@ -74,7 +74,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Não foi possível carregar os dados do exame."
+                    detail: "Não foi possível carregar os dados do exame.",
+                    life: 3000
                 });
                 router.push("/AllExamsList");
             } finally {
@@ -87,7 +88,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Nenhum exame selecionado!"
+                    detail: "Nenhum exame selecionado!",
+                    life: 3000
                 });
                 router.push("/AllExamsList");
                 return;
@@ -118,7 +120,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Por favor, selecione um arquivo PDF."
+                    detail: "Por favor, selecione um arquivo PDF.",
+                    life: 3000
                 });
                 return;
             }
@@ -140,7 +143,8 @@ export default defineComponent({
                     toast.add({
                         severity: "success",
                         summary: "Sucesso",
-                        detail: "Laudo enviado com sucesso!"
+                        detail: "Laudo enviado com sucesso!",
+                        life: 3000
                     });
                     
                     setTimeout(() => {
@@ -153,7 +157,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: message
+                    detail: message,
+                    life: 3000
                 });
             } finally {
                 uploading.value = false;
@@ -177,7 +182,8 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.",
+                life: 3000
             });
             router.push("/login");
         };
@@ -204,7 +210,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <Toast position="top-right" :life="5000" />
+    <Toast position="top-right" :life="3000" />
     
     <!-- Navbar -->
     <nav class="navbar">

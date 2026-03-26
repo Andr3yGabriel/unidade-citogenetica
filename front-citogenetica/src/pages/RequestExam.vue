@@ -40,7 +40,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível carregar os tipos de exame.'
+                    detail: 'Não foi possível carregar os tipos de exame.',
+                    life: 3000
                 });
             }
         };
@@ -52,7 +53,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Preencha todos os campos.'
+                    detail: 'Preencha todos os campos.',
+                    life: 3000
                 });
                 return;
             }
@@ -80,7 +82,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'success',
                     summary: 'Sucesso',
-                    detail: 'Solicitação de exame criada com sucesso!'
+                    detail: 'Solicitação de exame criada com sucesso!',
+                    life: 3000
                 });
                 router.push('/DoctorList');
 
@@ -88,7 +91,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível criar a solicitação de exame.'
+                    detail: 'Não foi possível criar a solicitação de exame.',
+                    life: 3000
                 });
             }
         };

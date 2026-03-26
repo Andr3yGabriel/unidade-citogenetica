@@ -27,7 +27,7 @@ export default defineComponent({
 
     const register = async () => {
       if (password.value !== confirmPassword.value) {
-        toast.add({ severity: "error", summary: "Erro", detail: "As senhas não coincidem" });
+        toast.add({ severity: "error", summary: "Erro", detail: "As senhas não coincidem", life: 3000 });
         return;
       }
 
@@ -41,7 +41,7 @@ export default defineComponent({
         router.push({ path: "/Login", query: { registered: "true" } });
       } catch (error: any) {
         const detail = error.response?.status === 409 ? "Usuário com esse email já existe!" : "Erro ao registrar usuário!";
-        toast.add({ severity: "error", summary: "Erro", detail });
+        toast.add({ severity: "error", summary: "Erro", detail, life: 3000 });
       }
     };
 
@@ -62,7 +62,7 @@ export default defineComponent({
 
 <template>
   <div id="pagina-registro">
-    <Toast position="top-left" :life="5000" />
+    <Toast position="top-left" :life="3000" />
     <main id="bloco-registro">
       <h1 class="titulo">Registre-se</h1>
       <section id="box-form-registro">

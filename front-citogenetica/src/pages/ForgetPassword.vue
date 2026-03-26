@@ -27,7 +27,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Por favor, insira seu e-mail.'
+                    detail: 'Por favor, insira seu e-mail.',
+                    life: 3000
                 });
                 return;
             }
@@ -37,7 +38,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'success',
                     summary: 'Sucesso',
-                    detail: 'Se um e-mail correspondente for encontrado, um link de redefinição de senha será enviado.'
+                    detail: 'Se um e-mail correspondente for encontrado, um link de redefinição de senha será enviado.',
+                    life: 3000
                 });
                 router.push('/Login');
             } catch (error: any) {
@@ -45,7 +47,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: detail
+                    detail: detail,
+                    life: 3000
                 });
             }
         };

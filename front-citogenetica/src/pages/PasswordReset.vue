@@ -33,6 +33,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: "Token de redefinição de senha não encontrado.",
+          life: 3000,
         });
         router.push("/Login");
       }
@@ -44,6 +45,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: "Por favor, preencha todos os campos.",
+          life: 3000,
         });
         return;
       }
@@ -53,6 +55,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: "As senhas não coincidem.",
+          life: 3000,
         });
         return;
       }
@@ -66,6 +69,7 @@ export default defineComponent({
           severity: "success",
           summary: "Sucesso",
           detail: "Senha redefinida com sucesso!",
+          life: 3000,
         });
         router.push("/Login");
       } catch (error: any) {
@@ -75,6 +79,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: detail,
+          life: 3000,
         });
       }
     };

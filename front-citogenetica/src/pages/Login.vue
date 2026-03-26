@@ -28,6 +28,7 @@ export default defineComponent({
           severity: "success",
           summary: "Sucesso",
           detail: "Usuário registrado com sucesso!",
+          life: 3000,
         });
         router.replace({ query: { registered: undefined } });
       }
@@ -51,7 +52,7 @@ export default defineComponent({
           error.response?.status === 404
             ? "Usuário não encontrado"
             : "Erro ao fazer login!";
-        toast.add({ severity: "error", summary: "Erro", detail });
+        toast.add({ severity: "error", summary: "Erro", detail, life: 3000 });
       }
     };
 
@@ -74,12 +75,14 @@ export default defineComponent({
           severity: "success",
           summary: "Sucesso",
           detail: "Login realizado com sucesso!",
+            life: 3000,
         });
       } else {
         toast.add({
           severity: "error",
           summary: "Erro",
           detail: "Tipo de usuário inválido",
+            life: 3000,
         });
       }
     };

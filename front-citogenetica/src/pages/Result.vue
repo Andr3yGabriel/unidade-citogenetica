@@ -28,7 +28,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Nenhum exame selecionado."
+                    detail: "Nenhum exame selecionado.",
+                    life: 3000
                 });
                 router.push("/");
                 return;
@@ -49,14 +50,16 @@ export default defineComponent({
                     toast.add({
                         severity: "warn",
                         summary: "Aviso",
-                        detail: "Nenhum resultado encontrado para este exame."
+                        detail: "Nenhum resultado encontrado para este exame.",
+                        life: 3000
                     });
                 }
             } catch (error) {
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Erro ao buscar resultado do exame."
+                    detail: "Erro ao buscar resultado do exame.",
+                    life: 3000
                 });
             }
         };
@@ -70,7 +73,8 @@ export default defineComponent({
                  toast.add({
                     severity: "error",
                     summary: "Erro de Impressão",
-                    detail: "Não foi possível acessar o conteúdo para impressão."
+                    detail: "Não foi possível acessar o conteúdo para impressão.",
+                    life: 3000
                 });
             }
         };

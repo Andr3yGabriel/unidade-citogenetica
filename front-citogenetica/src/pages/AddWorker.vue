@@ -45,7 +45,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível carregar os tipos de usuário.'
+                    detail: 'Não foi possível carregar os tipos de usuário.',
+                    life: 3000
                 });
             }
         };
@@ -57,7 +58,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Preencha todos os campos.'
+                    detail: 'Preencha todos os campos.',
+                    life: 3000
                 });
                 return;
             }
@@ -78,7 +80,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'success',
                     summary: 'Sucesso',
-                    detail: 'Funcionário registrado com sucesso!'
+                    detail: 'Funcionário registrado com sucesso!',
+                    life: 3000
                 });
                 router.push('/AdminList');
 
@@ -86,7 +89,8 @@ export default defineComponent({
                 toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Erro ao registrar funcionário.'
+                    detail: 'Erro ao registrar funcionário.',
+                    life: 3000
                 });
             }
         };

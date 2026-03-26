@@ -79,7 +79,7 @@ export default defineComponent({
 
         const fetchExams = async () => {
             if (!token) {
-                toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada ou inválida. Por favor, faça o login novamente." });
+                toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada ou inválida. Por favor, faça o login novamente.", life: 3000 });
                 router.push("/login");
                 return;
             }
@@ -103,7 +103,7 @@ export default defineComponent({
             } catch (error: any) {
                 console.error("Erro ao listar exames: ", error);
                 const detail = error.response?.data?.message || "Não foi possível buscar os exames.";
-                toast.add({ severity: "error", summary: "Erro de Rede", detail });
+                toast.add({ severity: "error", summary: "Erro de Rede", detail, life: 3000 });
             }
         };
 
@@ -155,7 +155,8 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.",
+                life: 3000
             });
             router.push("/login");
         };
@@ -194,7 +195,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <Toast position="top-right" :life="5000" />
+    <Toast position="top-right" :life="3000" />
     
     <!-- Navbar -->
     <nav class="navbar">

@@ -115,7 +115,7 @@ export default defineComponent({
                 users.value = response.data;
             } catch (error: any) {
                 console.error("Erro ao listar usuários:", error);
-                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar usuários." });
+                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar usuários.", life: 3000 });
             }
         };
 
@@ -127,7 +127,7 @@ export default defineComponent({
                 examTypes.value = response.data;
             } catch (error: any) {
                 console.error("Erro ao listar tipos de exame:", error);
-                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar tipos de exame." });
+                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar tipos de exame.", life: 3000 });
             }
         };
 
@@ -195,7 +195,7 @@ export default defineComponent({
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário criado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário criado com sucesso!", life: 3000 });
                 } else {
                     // Editar usuário existente
                     await apiClient.patch(`/admin/users/${editingUser.value?.id}`, {
@@ -206,7 +206,7 @@ export default defineComponent({
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário atualizado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário atualizado com sucesso!", life: 3000 });
                 }
                 showUserDialog.value = false;
                 await fetchUsers();
@@ -214,7 +214,7 @@ export default defineComponent({
             } catch (error: any) {
                 console.error("Erro ao salvar usuário:", error);
                 const message = error.response?.data?.message || "Erro ao salvar usuário";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -240,21 +240,21 @@ export default defineComponent({
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame criado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame criado com sucesso!", life: 3000 });
                 } else {
                     await apiClient.patch(`/admin/exam-types/${editingExamType.value?.id}`, {
                         name: examTypeForm.value.name
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame atualizado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame atualizado com sucesso!", life: 3000 });
                 }
                 showExamTypeDialog.value = false;
                 await fetchExamTypes();
             } catch (error: any) {
                 console.error("Erro ao salvar tipo de exame:", error);
                 const message = error.response?.data?.message || "Erro ao salvar tipo de exame";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -267,12 +267,12 @@ export default defineComponent({
                 await apiClient.delete(`/admin/exam-types/${examType.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame deletado com sucesso!" });
+                toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame deletado com sucesso!", life: 3000 });
                 await fetchExamTypes();
             } catch (error: any) {
                 console.error("Erro ao deletar tipo de exame:", error);
                 const message = error.response?.data?.message || "Erro ao deletar tipo de exame";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -289,7 +289,8 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.",
+                life: 3000
             });
             router.push("/login");
         };
@@ -324,7 +325,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <Toast position="top-right" :life="5000" />
+    <Toast position="top-right" :life="3000" />
     
     <!-- Navbar -->
     <nav class="navbar">
