@@ -181,7 +181,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Toast position="top-right" />
+  <Toast position="top-right" :life="5000" />
 
   <!-- Navbar -->
   <nav class="navbar">

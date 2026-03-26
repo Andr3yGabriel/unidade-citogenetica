@@ -11,7 +11,7 @@ export default {
 
 <template>
   <div id="app">
-    <Toast />
+    <Toast :life="5000" />
     <router-view></router-view>
   </div>
 </template>
