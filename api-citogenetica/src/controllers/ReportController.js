@@ -1,4 +1,5 @@
 const db = require('../models');
+const path = require('path');
 
 class ReportController {
     /**
@@ -101,6 +102,49 @@ class ReportController {
             res.status(500).json({ 
                 message: 'Erro ao atualizar laudo.', 
                 error: error.message 
+            });
+        }
+    }
+
+    static async getReportByExamId(req, res) {
+        try {
+            const { examId } = req.params;
+            const report = await db.Report.findOne({ where: { examId: Number(examId) } });
+
+            if (!report) {
+                return res.status(404).json({ message: 'Laudo não encontrado.' });
+            }
+
+            return res.status(200).json(report);
+        } catch (error) {
+            console.error('Erro ao buscar laudo:', error);
+            return res.status(500).json({
+                message: 'Erro ao buscar laudo.',
+                error: error.message
+            });
+        }
+    }
+
+    static async downloadReport(req, res) {
+        try {
+            const { examId } = req.params;
+            const report = await db.Report.findOne({ where: { examId: Number(examId) } });
+
+            if (!report || !report.filePath) {
+                return res.status(404).json({ message: 'Laudo não encontrado.' });
+            }
+
+            const absolutePath = path.resolve(report.filePath);
+            return res.sendFile(absolutePath, (err) => {
+                if (err) {
+                    res.status(500).send('Não foi possível fazer o download do arquivo.');
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao baixar laudo:', error);
+            return res.status(500).json({
+                message: 'Erro ao baixar o laudo.',
+                error: error.message
             });
         }
     }
