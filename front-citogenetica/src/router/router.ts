@@ -2,13 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import LandingPage from "../pages/LandingPage.vue";
 import Login from "../pages/Login.vue";
 import Register from "../pages/Register.vue";
-import DoctorList from "../pages/DoctorList.vue";
+import DoctorList from "../components/DoctorList.vue";
 import AddExamFile from "../pages/AddExamFile.vue";
 import Result from "../pages/Result.vue";
 import PatientList from "../pages/PatientList.vue";
 import AllExamsList from "../pages/AllExamsList.vue";
 import AdminList from "../pages/AdminList.vue";
 import RequestExam from "../pages/RequestExam.vue";
+import BuscaPaciente from "../components/BuscaPaciente.vue";
 import AddWorker from "../pages/AddWorker.vue";
 import ForgetPassword from "../pages/ForgetPassword.vue";
 import PasswordReset from "../pages/PasswordReset.vue";
@@ -22,7 +23,8 @@ const routes = [
     {
         path: '/Login',
         name: 'Login',
-        component: Login
+        component: Login,
+        alias: ['/login']
     },
     {
         path: '/Register',
@@ -42,7 +44,8 @@ const routes = [
     {
         path: '/Result',
         name: 'Result',
-        component: Result
+        component: Result,
+        alias: ['/result']
     },
     {
         path: '/PatientList',
@@ -53,6 +56,11 @@ const routes = [
         path: '/AllExamsList',
         name: 'AllExamsList',
         component: AllExamsList
+    },
+    {
+        path: '/BuscaPaciente',
+        name: 'BuscaPaciente',
+        component: BuscaPaciente
     },
     {
         path: '/AdminList',
