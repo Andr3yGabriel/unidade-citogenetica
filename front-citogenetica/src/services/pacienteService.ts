@@ -3,7 +3,7 @@
 import apiClient from '../axiosConfig';
 
 /**
- * Busca paciente por CPF ou número SUS
+ * Busca paciente por CPF ou número SES
  */
 export const buscarPacientePorCpfOuSus = (termo: string) => {
   return apiClient.get(`/pacientes/buscar`, {
@@ -19,7 +19,7 @@ export const buscarPacientePorCpf = (cpf: string) => {
 };
 
 /**
- * Busca paciente especificamente por número SUS
+ * Busca paciente especificamente por número SES
  */
 export const buscarPacientePorNumeroSus = (numeroSus: string) => {
   return apiClient.get(`/pacientes/buscar/sus/${numeroSus}`);
