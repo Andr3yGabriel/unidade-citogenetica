@@ -19,7 +19,7 @@ export default defineComponent({
   setup() {
     const toast = useToast();
     const router = useRouter();
-    const document = ref<string>("");
+    const sesNumber = ref<string>("");
     const password = ref<string>("");
 
     onMounted(() => {
@@ -36,7 +36,7 @@ export default defineComponent({
     const login = async () => {
       try {
         const response = await apiClient.post("/auth/login", {
-          document: document.value,
+          sesNumber: sesNumber.value,
           password: password.value,
         });
 
@@ -47,11 +47,19 @@ export default defineComponent({
 
         goToList(userType);
       } catch (error: any) {
-        const detail =
-          error.response?.status === 404
-            ? "Usuário não encontrado"
-            : "Erro ao fazer login!";
-        toast.add({ severity: "error", summary: "Erro", detail });
+        let detail: string;
+        if (!error.response) {
+          detail = "Servidor indisponível. Verifique sua conexão e tente novamente.";
+        } else if (error.response.status === 404) {
+          detail = "Usuário não encontrado. Verifique o Nº SES informado.";
+        } else if (error.response.status === 401) {
+          detail = "Senha incorreta. Tente novamente.";
+        } else if (error.response.status === 500) {
+          detail = "Erro interno do servidor. Tente novamente em instantes.";
+        } else {
+          detail = error.response.data?.message || "Erro ao fazer login. Tente novamente.";
+        }
+        toast.add({ severity: "error", summary: "Erro de Autenticação", detail, life: 5000 });
       }
     };
 
@@ -62,7 +70,7 @@ export default defineComponent({
     const listChoices: { [key: string]: string } = {
       paciente: "/PatientList",
       tecnico: "/AllExamsList",
-      admin: "/AdminList",
+      admin: "/AdminPanel",
       medico: "/DoctorList",
     };
 
@@ -73,7 +81,7 @@ export default defineComponent({
         toast.add({
           severity: "success",
           summary: "Sucesso",
-          detail: "Login realizado com sucesso!",
+          detail: "Login realizado com sucesso!", life: 3000,
         });
       } else {
         toast.add({
@@ -85,7 +93,7 @@ export default defineComponent({
     };
 
     return {
-      document,
+      sesNumber,
       password,
       login,
       goToHome,
@@ -147,14 +155,14 @@ export default defineComponent({
           <div class="campo-grupo">
             <FloatLabel variant="on">
               <InputText
-                v-tooltip="'Insira seu CPF (somente números)'"
+                v-tooltip="'Insira seu Nº SES (somente números)'"
                 id="document"
-                v-model="document"
+                v-model="sesNumber"
                 type="text"
                 class="login-input"
                 size="large"
               />
-              <label for="document">CPF</label>
+              <label for="document">Nº SES</label>
             </FloatLabel>
           </div>
 
@@ -165,6 +173,7 @@ export default defineComponent({
                 id="password"
                 v-model="password"
                 :feedback="false"
+                @keyup.enter="login"
                 toggleMask
                 fluid
               />
@@ -183,10 +192,11 @@ export default defineComponent({
             rounded
           />
 
-          <div class="cadastro-link">
+          <!-- Acesso de paciente desativado temporariamente -->
+          <!-- <div class="cadastro-link">
             <span>Não tem conta?</span>
             <a class="a-login-cadastro" @click="goToRegister">Cadastre-se</a>
-          </div>
+          </div> -->
         </section>
       </div>
     </main>
