@@ -34,11 +34,7 @@ export default defineComponent({
 
         const fetchUserTypes = async () => {
             try {
-                const response = await apiClient.get<UserType[]>('/user-types', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-                });
+                const response = await apiClient.get<UserType[]>('/user-types');
                 // Filtrar para incluir apenas 'tecnico', 'medico', 'admin'
                 userTypes.value = response.data.filter(type => type.name !== 'paciente');
             } catch (error) {
@@ -66,13 +62,9 @@ export default defineComponent({
                 await apiClient.post('/admin/register/worker', {
                     completeName: completeName.value,
                     email: email.value,
-                    document: document.value,
+                    sesNumber: document.value,
                     password: password.value,
                     userTypeId: selectedUserType.value
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
                 });
 
                 toast.add({

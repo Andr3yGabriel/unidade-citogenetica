@@ -40,7 +40,7 @@ export default defineComponent({
           completeName: completeName.value,
           password: password.value,
           email: email.value,
-          document: document.value,
+          sesNumber: document.value,
         });
         router.push({ path: "/Login", query: { registered: "true" } });
       } catch (error: any) {
