@@ -64,13 +64,20 @@ export default defineComponent({
         const pdfIframe = ref<HTMLIFrameElement | null>(null);
 
         const handlePrint = () => {
-            if (pdfIframe.value?.contentWindow) {
-                pdfIframe.value.contentWindow.print();
-            } else {
-                 toast.add({
-                    severity: "error",
-                    summary: "Erro de Impressão",
-                    detail: "Não foi possível acessar o conteúdo para impressão."
+            if (!examResult.value) {
+                toast.add({
+                    severity: "warn",
+                    summary: "Aviso",
+                    detail: "Nenhum laudo disponível para impressão."
+                });
+                return;
+            }
+            const printWindow = window.open(examResult.value, '_blank');
+            if (!printWindow) {
+                toast.add({
+                    severity: "warn",
+                    summary: "Pop-up bloqueado",
+                    detail: "Permita pop-ups neste site para imprimir, ou pressione Ctrl+P com o laudo visível."
                 });
             }
         };
