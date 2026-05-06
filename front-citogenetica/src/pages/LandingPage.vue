@@ -533,8 +533,8 @@ main {
       }
 
       .logo-unidade {
-        width: 280px;
-        height: 280px;
+        width: 220px;
+        height: 200px;
         object-fit: cover;
         object-position: center;
         display: block;

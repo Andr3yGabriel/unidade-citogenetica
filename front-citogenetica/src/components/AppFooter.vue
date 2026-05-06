@@ -2,10 +2,7 @@
   <footer>
     <p>
       Desenvolvido por
-      <a href="https://github.com/Andr3yGabriel">Andrey Gonçalves</a> |
-      <a href="https://github.com/javu4k">Júlia Peghini</a> |
-      <a href="https://github.com/s4abr1na">Sabrina Souza </a> |
-      <a href="https://github.com/davih1660">Davi Cruz</a> - 2024
+      <a href="https://github.com/javu4k">Júlia Peghini</a> - 2026
     </p>
   </footer>
 </template>
