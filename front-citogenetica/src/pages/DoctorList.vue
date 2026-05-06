@@ -110,14 +110,15 @@ export default defineComponent({
     <AppHeader />
     <main id="box-situacao" style="padding-top: 60px;">
       <h1 class="titulo">Exames Solicitados</h1>
-      <section id="box-interacao">
+      <!-- Solicitação de exame desativada para médicos; apenas técnicos solicitam -->
+      <!-- <section id="box-interacao">
         <Button
           label="Novo Exame"
           icon="pi pi-plus"
           class="bt-add-exame"
           @click="goToNewExam"
         />
-      </section>
+      </section> -->
       <section id="tabela-pacientes">
         <div v-if="exams.length < 1" class="sem-exames">
           <h3>Nenhum exame solicitado foi encontrado.</h3>

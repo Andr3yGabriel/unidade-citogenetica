@@ -1,6 +1,7 @@
+const UserType = require('../models/UserType').default;
 const express = require('express');
 const router = express.Router();
-const upload = require('../config/multerConfig');
+const upload = require('../config/multerConfig').default;
 
 // Middlewares
 const { authenticateToken, authorize } = require('../middleware/authMiddleware');
@@ -38,7 +39,7 @@ router.patch('/user/update-password',
 // --- Rotas de Exames (Protegidas com autorização específica) ---
 router.post('/exams',
     authenticateToken,
-    authorize(['tecnico', 'admin', 'medico']),
+    authorize(['tecnico', 'admin']),
     ExamController.createExam
 );
 router.get('/exams/all',
@@ -98,15 +99,15 @@ router.get('/exam-types',
     ExamController.listExamTypes
 );
 
-// Rota para buscar usuário por documento (CPF)
-router.get('/users/document/:document',
+// Rota para buscar usuário por sesNumbero (CPF)
+router.get('/users/sesNumber/:sesNumber',
     authenticateToken,
     async (req, res) => {
         try {
-            const { document } = req.params;
-            const user = await require('../models').User.findOne({
-                where: { document },
-                attributes: ['id', 'completeName', 'email', 'document']
+            const { sesNumber } = req.params;
+            const user = await require('../models').default.User.findOne({
+                where: { sesNumber },
+                attributes: ['id', 'completeName', 'email', 'sesNumber']
             });
             
             if (!user) {
@@ -131,9 +132,9 @@ router.get('/users/:userId',
     async (req, res) => {
         try {
             const { userId } = req.params;
-            const user = await require('../models').User.findOne({
+            const user = await require('../models').default.User.findOne({
                 where: { id: userId },
-                attributes: ['id', 'completeName', 'email', 'document', 'userTypeId'],
+                attributes: ['id', 'completeName', 'email', 'sesNumber', 'userTypeId'],
                 include: [{
                     association: 'userType',
                     attributes: ['name']
@@ -163,8 +164,8 @@ router.get('/admin/users',
     authorize(['admin']),
     async (req, res) => {
         try {
-            const users = await require('../models').User.findAll({
-                attributes: ['id', 'completeName', 'email', 'document', 'userTypeId'],
+            const users = await require('../models').default.User.findAll({
+                attributes: ['id', 'completeName', 'email', 'sesNumber', 'userTypeId'],
                 include: [{
                     association: 'userType',
                     attributes: ['name']
@@ -188,14 +189,14 @@ router.patch('/admin/users/:userId',
     async (req, res) => {
         try {
             const { userId } = req.params;
-            const { completeName, email, document, userTypeId } = req.body;
+            const { completeName, email, sesNumber, userTypeId } = req.body;
             
-            const user = await require('../models').User.findByPk(userId);
+            const user = await require('../models').default.User.findByPk(userId);
             if (!user) {
                 return res.status(404).json({ message: 'Usuário não encontrado' });
             }
 
-            await user.update({ completeName, email, document, userTypeId });
+            await user.update({ completeName, email, sesNumber, userTypeId });
             res.status(200).json({ message: 'Usuário atualizado com sucesso', user });
         } catch (error) {
             res.status(500).json({ 
@@ -214,7 +215,7 @@ router.post('/admin/exam-types',
     async (req, res) => {
         try {
             const { name } = req.body;
-            const newType = await require('../models').ExamType.create({ name });
+            const newType = await require('../models').default.ExamType.create({ name });
             res.status(201).json({ 
                 message: 'Tipo de exame criado com sucesso', 
                 examType: newType 
@@ -237,7 +238,7 @@ router.patch('/admin/exam-types/:typeId',
             const { typeId } = req.params;
             const { name } = req.body;
             
-            const examType = await require('../models').ExamType.findByPk(typeId);
+            const examType = await require('../models').default.ExamType.findByPk(typeId);
             if (!examType) {
                 return res.status(404).json({ message: 'Tipo de exame não encontrado' });
             }
@@ -265,7 +266,7 @@ router.delete('/admin/exam-types/:typeId',
             const { typeId } = req.params;
             
             // Verificar se há exames usando este tipo
-            const examCount = await require('../models').Exam.count({
+            const examCount = await require('../models').default.Exam.count({
                 where: { examTypeId: typeId }
             });
 
@@ -275,7 +276,7 @@ router.delete('/admin/exam-types/:typeId',
                 });
             }
 
-            const examType = await require('../models').ExamType.findByPk(typeId);
+            const examType = await require('../models').default.ExamType.findByPk(typeId);
             if (!examType) {
                 return res.status(404).json({ message: 'Tipo de exame não encontrado' });
             }
@@ -297,7 +298,7 @@ router.get('/admin/user-types',
     authorize(['admin']),
     async (req, res) => {
         try {
-            const userTypes = await require('../models').UserType.findAll({
+            const userTypes = await UserType.findAll({
                 attributes: ['id', 'name'],
                 order: [['name', 'ASC']]
             });
@@ -318,12 +319,12 @@ router.get('/exams/:examId',
     async (req, res) => {
         try {
             const { examId } = req.params;
-            const exam = await require('../models').Exam.findOne({
+            const exam = await require('../models').default.Exam.findOne({
                 where: { id: examId },
                 include: [
                     { 
                         association: 'patient',
-                        attributes: ['id', 'completeName', 'document', 'susNumber', 'email']
+                        attributes: ['id', 'completeName', 'sesNumber', 'sesNumber', 'email']
                     },
                     { 
                         association: 'requestingDoctor',
@@ -358,7 +359,7 @@ router.get('/result/:examId',
             const path = require('path');
 
             // Buscar o laudo do exame
-            const report = await require('../models').Report.findOne({
+            const report = await require('../models').default.Report.findOne({
                 where: { examId: examId }
             });
 
