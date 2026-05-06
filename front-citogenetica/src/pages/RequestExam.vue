@@ -82,7 +82,8 @@ export default defineComponent({
                     summary: 'Sucesso',
                     detail: 'Solicitação de exame criada com sucesso!'
                 });
-                router.push('/DoctorList');
+                const afterRoute = localStorage.getItem('userType') === 'tecnico' ? '/AllExamsList' : '/DoctorList';
+                router.push(afterRoute);
 
             } catch (error) {
                 toast.add({
@@ -94,7 +95,8 @@ export default defineComponent({
         };
 
         const handleCancel = () => {
-            router.push('/DoctorList');
+            const afterRoute = localStorage.getItem('userType') === 'tecnico' ? '/AllExamsList' : '/DoctorList';
+            router.push(afterRoute);
         };
 
         return {

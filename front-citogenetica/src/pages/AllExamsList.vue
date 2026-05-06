@@ -45,6 +45,7 @@ export default defineComponent({
     const toast = useToast();
     const router = useRouter();
     const token = localStorage.getItem("token") || "";
+    const userType = localStorage.getItem("userType") || "";
     const exams = ref<DisplayExam[]>([]);
 
     const fetchExams = async () => {
@@ -94,10 +95,16 @@ export default defineComponent({
       }
     };
 
+    const goToNewExam = () => {
+      router.push("/RequestExam");
+    };
+
     return {
       exams,
       handleExamClick,
       logout,
+      userType,
+      goToNewExam,
     };
   }
 });
@@ -109,6 +116,14 @@ export default defineComponent({
     <AppHeader />
     <main id="box-situacao" style="padding-top: 60px;">
       <h1 class="titulo">Situação de Exames</h1>
+      <section v-if="userType === 'tecnico'" id="box-interacao">
+        <Button
+          label="Solicitar Exame"
+          icon="pi pi-plus"
+          class="bt-add-exame"
+          @click="goToNewExam"
+        />
+      </section>
       <section id="tabela-pacientes">
         <div v-if="exams.length < 1" class="sem-exames">
           <h3>Não há exames a serem exibidos</h3>
@@ -149,6 +164,13 @@ export default defineComponent({
   color: $dark-gray;
   font-weight: 300;
   font-size: 2.5rem;
+}
+
+#box-interacao {
+  display: flex;
+  justify-content: flex-start;
+  width: 61%;
+  margin: 15px 0 20px;
 }
 
 .sem-exames h3 {
