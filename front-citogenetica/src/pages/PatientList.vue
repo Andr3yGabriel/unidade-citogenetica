@@ -49,7 +49,7 @@ export default defineComponent({
 
     const fetchExams = async () => {
       if (!token) {
-        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada!" });
+        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada!", life: 3000 });
         router.push("/Login");
         return;
       }
@@ -71,6 +71,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: "Não foi possível carregar seus exames. Tente novamente mais tarde.",
+          life: 3000,
         });
       }
     };

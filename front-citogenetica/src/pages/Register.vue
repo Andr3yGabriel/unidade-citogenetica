@@ -31,6 +31,7 @@ export default defineComponent({
           severity: "error",
           summary: "Erro",
           detail: "As senhas não coincidem",
+          life: 3000,
         });
         return;
       }
@@ -48,7 +49,7 @@ export default defineComponent({
           error.response?.status === 409
             ? "Usuário com esse email já existe!"
             : "Erro ao registrar usuário!";
-        toast.add({ severity: "error", summary: "Erro", detail });
+        toast.add({ severity: "error", summary: "Erro", detail, life: 3000 });
       }
     };
 

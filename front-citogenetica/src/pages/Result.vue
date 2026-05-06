@@ -28,7 +28,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Nenhum exame selecionado."
+                    detail: "Nenhum exame selecionado.",
+                    life: 3000
                 });
                 router.push("/");
                 return;
@@ -46,14 +47,16 @@ export default defineComponent({
                     toast.add({
                         severity: "warn",
                         summary: "Aviso",
-                        detail: "Nenhum resultado encontrado para este exame."
+                        detail: "Nenhum resultado encontrado para este exame.",
+                        life: 3000
                     });
                 }
             } catch (error) {
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Erro ao buscar resultado do exame."
+                    detail: "Erro ao buscar resultado do exame.",
+                    life: 3000
                 });
             }
         };
@@ -65,7 +68,8 @@ export default defineComponent({
                 toast.add({
                     severity: "warn",
                     summary: "Aviso",
-                    detail: "Nenhum laudo disponível para impressão."
+                    detail: "Nenhum laudo disponível para impressão.",
+                    life: 3000
                 });
                 return;
             }
@@ -74,7 +78,8 @@ export default defineComponent({
                 toast.add({
                     severity: "warn",
                     summary: "Pop-up bloqueado",
-                    detail: "Permita pop-ups neste site para imprimir, ou pressione Ctrl+P com o laudo visível."
+                    detail: "Permita pop-ups neste site para imprimir, ou pressione Ctrl+P com o laudo visível.",
+                    life: 3000
                 });
             }
         };

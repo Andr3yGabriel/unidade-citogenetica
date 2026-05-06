@@ -31,7 +31,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Por favor, selecione um arquivo."
+                    detail: "Por favor, selecione um arquivo.",
+                    life: 3000
                 });
                 return;
             }
@@ -41,7 +42,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Nenhum exame selecionado."
+                    detail: "Nenhum exame selecionado.",
+                    life: 3000
                 });
                 router.push("/AllExamsList");
                 return;
@@ -57,7 +59,8 @@ export default defineComponent({
                     toast.add({
                         severity: "success",
                         summary: "Sucesso",
-                        detail: "Laudo enviado com sucesso!"
+                        detail: "Laudo enviado com sucesso!",
+                        life: 3000
                     });
                     router.push("/AllExamsList");
                 }
@@ -65,7 +68,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Erro ao enviar laudo!"
+                    detail: "Erro ao enviar laudo!",
+                    life: 3000
                 });
             }
         };

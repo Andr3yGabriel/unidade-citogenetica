@@ -45,8 +45,8 @@ export default defineComponent({
 
     const fetchWorkers = async () => {
       if (!token) {
-        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada. Faça o login novamente." });
-        router.push("/login");
+        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada. Faça o login novamente.", life: 3000 });
+        router.push("/Login");
         return;
       }
 

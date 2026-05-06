@@ -50,8 +50,8 @@ export default defineComponent({
 
     const fetchExams = async () => {
       if (!token) {
-        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada ou inválida. Por favor, faça o login novamente." });
-        router.push("/login");
+        toast.add({ severity: "error", summary: "Erro de Autenticação", detail: "Sessão expirada ou inválida. Por favor, faça o login novamente.", life: 3000 });
+        router.push("/Login");
         return;
       }
 
