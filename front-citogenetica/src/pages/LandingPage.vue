@@ -271,7 +271,7 @@ const loginPage = () => router.push('/Login');
     <section class="logo-rodape">
       <img src="../assets/logo-unidade.jpg" alt="Logo da Unidade de Genética" />
       <img src="../assets/logo-gdf.png" alt="Logo do GDF" />
-      <img src="../assets/logo-sus.png" alt="Logo do SUS" />
+      <img src="../assets/logo-sus.png" alt="Logo do SES" />
     </section>
 
     <AppFooter />

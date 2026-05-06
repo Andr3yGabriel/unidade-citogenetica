@@ -11,7 +11,7 @@ interface ExamData {
         id: number;
         completeName: string;
         document: string;
-        susNumber: string;
+        sesNumber: string;
         email: string;
     };
     requestingDoctor: {
@@ -177,7 +177,7 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.", life: 3000, life: 3000 
             });
             router.push("/login");
         };
@@ -277,9 +277,9 @@ export default defineComponent({
                 <span class="info-value">{{ formatCPF(examData.patient.document) }}</span>
               </div>
 
-              <div class="info-item" v-if="examData.patient.susNumber">
-                <label>Número SUS:</label>
-                <span class="info-value">{{ examData.patient.susNumber }}</span>
+              <div class="info-item" v-if="examData.patient.sesNumber">
+                <label>Número SES:</label>
+                <span class="info-value">{{ examData.patient.sesNumber }}</span>
               </div>
 
               <div class="info-item">

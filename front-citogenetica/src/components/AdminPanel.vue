@@ -8,7 +8,7 @@ interface User {
   id: number;
   completeName: string;
   email: string;
-  document: string;
+  sesNumber: string;
   userType: {
     id: number;
     name: string;
@@ -23,6 +23,7 @@ interface ExamType {
 interface UserType {
   id: number;
   name: string;
+  label?: string;
 }
 
 interface Stats {
@@ -31,6 +32,12 @@ interface Stats {
   usersByType: { [key: string]: number };
   examsByStatus: { [key: string]: number };
 }
+
+const nameMap: { [key: string]: string } = {
+  admin: 'Administrador',
+  tecnico: 'Técnico',
+  medico: 'Médico'
+};
 
 export default defineComponent({
     name: "AdminPanel",
@@ -60,7 +67,7 @@ export default defineComponent({
         const userForm = ref({
             completeName: '',
             email: '',
-            document: '',
+            sesNumber: '',
             userTypeId: null as number | null,
             password: ''
         });
@@ -101,7 +108,9 @@ export default defineComponent({
                 const response = await apiClient.get('/admin/user-types', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                userTypes.value = response.data;
+                userTypes.value = response.data
+                    .filter((t: UserType) => t.name !== 'paciente')
+                    .map((t: UserType) => ({ ...t, label: nameMap[t.name] || t.name }));
             } catch (error) {
                 console.error("Erro ao buscar tipos de usuário:", error);
             }
@@ -115,7 +124,7 @@ export default defineComponent({
                 users.value = response.data;
             } catch (error: any) {
                 console.error("Erro ao listar usuários:", error);
-                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar usuários." });
+                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar usuários.", life: 3000 });
             }
         };
 
@@ -127,19 +136,16 @@ export default defineComponent({
                 examTypes.value = response.data;
             } catch (error: any) {
                 console.error("Erro ao listar tipos de exame:", error);
-                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar tipos de exame." });
+                toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível carregar tipos de exame.", life: 3000 });
             }
         };
 
         const fetchStats = async () => {
             try {
-                // Buscar estatísticas (você pode criar endpoints específicos depois)
                 stats.value.totalUsers = users.value.length;
-                
-                // Contar usuários por tipo
                 const usersByType: { [key: string]: number } = {};
                 users.value.forEach(user => {
-                    const typeName = user.userType.name;
+                    const typeName = nameMap[user.userType.name] || user.userType.name;
                     usersByType[typeName] = (usersByType[typeName] || 0) + 1;
                 });
                 stats.value.usersByType = usersByType;
@@ -162,7 +168,7 @@ export default defineComponent({
             userForm.value = {
                 completeName: '',
                 email: '',
-                document: '',
+                sesNumber: '',
                 userTypeId: null,
                 password: ''
             };
@@ -175,7 +181,7 @@ export default defineComponent({
             userForm.value = {
                 completeName: user.completeName,
                 email: user.email,
-                document: user.document,
+                sesNumber: user.sesNumber,
                 userTypeId: user.userType.id,
                 password: ''
             };
@@ -185,28 +191,26 @@ export default defineComponent({
         const saveUser = async () => {
             try {
                 if (isNewUser.value) {
-                    // Criar novo usuário via /admin/register/worker
                     await apiClient.post('/admin/register/worker', {
                         completeName: userForm.value.completeName,
                         email: userForm.value.email,
-                        document: userForm.value.document,
+                        sesNumber: userForm.value.sesNumber,
                         password: userForm.value.password,
                         userTypeId: userForm.value.userTypeId
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário criado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário criado com sucesso!", life: 3000 });
                 } else {
-                    // Editar usuário existente
                     await apiClient.patch(`/admin/users/${editingUser.value?.id}`, {
                         completeName: userForm.value.completeName,
                         email: userForm.value.email,
-                        document: userForm.value.document,
+                        sesNumber: userForm.value.sesNumber,
                         userTypeId: userForm.value.userTypeId
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário atualizado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Usuário atualizado com sucesso!", life: 3000 });
                 }
                 showUserDialog.value = false;
                 await fetchUsers();
@@ -214,7 +218,7 @@ export default defineComponent({
             } catch (error: any) {
                 console.error("Erro ao salvar usuário:", error);
                 const message = error.response?.data?.message || "Erro ao salvar usuário";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -240,21 +244,21 @@ export default defineComponent({
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame criado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame criado com sucesso!", life: 3000 });
                 } else {
                     await apiClient.patch(`/admin/exam-types/${editingExamType.value?.id}`, {
                         name: examTypeForm.value.name
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame atualizado com sucesso!" });
+                    toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame atualizado com sucesso!", life: 3000 });
                 }
                 showExamTypeDialog.value = false;
                 await fetchExamTypes();
             } catch (error: any) {
                 console.error("Erro ao salvar tipo de exame:", error);
                 const message = error.response?.data?.message || "Erro ao salvar tipo de exame";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -267,12 +271,12 @@ export default defineComponent({
                 await apiClient.delete(`/admin/exam-types/${examType.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame deletado com sucesso!" });
+                toast.add({ severity: "success", summary: "Sucesso", detail: "Tipo de exame deletado com sucesso!", life: 3000 });
                 await fetchExamTypes();
             } catch (error: any) {
                 console.error("Erro ao deletar tipo de exame:", error);
                 const message = error.response?.data?.message || "Erro ao deletar tipo de exame";
-                toast.add({ severity: "error", summary: "Erro", detail: message });
+                toast.add({ severity: "error", summary: "Erro", detail: message, life: 3000 });
             }
         };
 
@@ -289,12 +293,14 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.",
+                life: 3000
             });
             router.push("/login");
         };
 
         return {
+            nameMap,
             userName,
             userTypeLabel,
             showDropdown,
@@ -414,10 +420,10 @@ export default defineComponent({
                 <div class="user-info-card">
                   <h4>{{ user.completeName }}</h4>
                   <p class="user-email">{{ user.email }}</p>
-                  <p class="user-document">CPF: {{ user.document }}</p>
+                  <p class="user-document">Nº SES: {{ user.sesNumber }}</p>
                 </div>
                 <div class="user-type-badge">
-                  {{ user.userType.name }}
+                  {{ nameMap[user.userType.name] || user.userType.name }}
                 </div>
               </div>
             </div>
@@ -481,8 +487,8 @@ export default defineComponent({
         </div>
 
         <div class="p-field">
-          <label for="document">CPF</label>
-          <InputText id="document" v-model="userForm.document" />
+          <label for="sesNumber">Nº SES</label>
+          <InputText id="sesNumber" v-model="userForm.sesNumber" />
         </div>
 
         <div class="p-field">
@@ -491,7 +497,7 @@ export default defineComponent({
             id="userType" 
             v-model="userForm.userTypeId" 
             :options="userTypes" 
-            optionLabel="name" 
+            optionLabel="label" 
             optionValue="id"
             placeholder="Selecione o tipo"
           />
@@ -531,7 +537,6 @@ export default defineComponent({
 </template>
 
 <style scoped>
-/* Navbar (igual aos outros) */
 .navbar {
   display: flex;
   padding: 10px 20px;
@@ -587,14 +592,8 @@ export default defineComponent({
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown-header {
@@ -612,20 +611,9 @@ export default defineComponent({
   margin-bottom: 0.5rem;
 }
 
-.user-role {
-  margin-bottom: 0;
-  opacity: 0.9;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.user-info i,
-.user-role i {
-  font-size: 1.1rem;
-}
+.user-role { margin-bottom: 0; opacity: 0.9; }
+.user-name { font-weight: 600; font-size: 1rem; }
+.user-info i, .user-role i { font-size: 1.1rem; }
 
 .dropdown-divider {
   height: 1px;
@@ -647,19 +635,10 @@ export default defineComponent({
   border-radius: 0 0 8px 8px;
 }
 
-.dropdown-item:hover {
-  background: #f3f4f6;
-}
+.dropdown-item:hover { background: #f3f4f6; }
+.dropdown-item.logout { color: #dc2626; }
+.dropdown-item i { font-size: 1.1rem; }
 
-.dropdown-item.logout {
-  color: #dc2626;
-}
-
-.dropdown-item i {
-  font-size: 1.1rem;
-}
-
-/* Container Principal */
 .page-container {
   min-height: calc(100vh - 120px);
   background-color: #f8fafc;
@@ -671,24 +650,10 @@ export default defineComponent({
   margin: 0 auto;
 }
 
-.page-header {
-  margin-bottom: 2rem;
-}
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { color: #1e293b; font-size: 2rem; font-weight: 600; margin: 0 0 0.5rem 0; }
+.subtitle { color: #64748b; font-size: 1rem; margin: 0; }
 
-.page-header h1 {
-  color: #1e293b;
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-}
-
-.subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin: 0;
-}
-
-/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -706,30 +671,12 @@ export default defineComponent({
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.stat-icon {
-  font-size: 2.5rem;
-  color: #0062ae;
-}
+.stat-icon { font-size: 2.5rem; color: #0062ae; }
+.stat-content h3 { font-size: 2rem; font-weight: 700; color: #1e293b; margin: 0; }
+.stat-content p { color: #64748b; margin: 0; font-size: 0.875rem; }
 
-.stat-content h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
+.tab-header { margin-bottom: 2rem; }
 
-.stat-content p {
-  color: #64748b;
-  margin: 0;
-  font-size: 0.875rem;
-}
-
-/* Tab Header */
-.tab-header {
-  margin-bottom: 2rem;
-}
-
-/* Users List */
 .users-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -746,23 +693,9 @@ export default defineComponent({
   border-left: 4px solid #0062ae;
 }
 
-.user-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.user-info-card h4 {
-  color: #1e293b;
-  margin: 0 0 0.5rem 0;
-  font-size: 1.125rem;
-}
-
-.user-email,
-.user-document {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin: 0.25rem 0;
-}
+.user-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+.user-info-card h4 { color: #1e293b; margin: 0 0 0.5rem 0; font-size: 1.125rem; }
+.user-email, .user-document { color: #64748b; font-size: 0.875rem; margin: 0.25rem 0; }
 
 .user-type-badge {
   margin-top: 1rem;
@@ -775,12 +708,7 @@ export default defineComponent({
   font-weight: 600;
 }
 
-/* Exam Types List */
-.exam-types-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+.exam-types-list { display: flex; flex-direction: column; gap: 1rem; }
 
 .exam-type-card {
   background: white;
@@ -801,44 +729,15 @@ export default defineComponent({
   color: #1e293b;
 }
 
-.exam-type-name i {
-  color: #0062ae;
-  font-size: 1.5rem;
-}
+.exam-type-name i { color: #0062ae; font-size: 1.5rem; }
+.exam-type-actions { display: flex; gap: 0.5rem; }
 
-.exam-type-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+.dialog-form { display: flex; flex-direction: column; gap: 1.5rem; padding: 1rem 0; }
+.p-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.p-field label { font-weight: 600; color: #374151; font-size: 0.875rem; }
 
-/* Dialog Form */
-.dialog-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem 0;
-}
-
-.p-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.p-field label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-}
-
-/* Responsivo */
 @media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .users-list {
-    grid-template-columns: 1fr;
-  }
+  .stats-grid { grid-template-columns: 1fr; }
+  .users-list { grid-template-columns: 1fr; }
 }
 </style>

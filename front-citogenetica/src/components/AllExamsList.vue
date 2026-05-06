@@ -155,7 +155,7 @@ export default defineComponent({
             toast.add({ 
                 severity: "success", 
                 summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso." 
+                detail: "Você foi desconectado com sucesso.", life: 3000, life: 3000 
             });
             router.push("/login");
         };

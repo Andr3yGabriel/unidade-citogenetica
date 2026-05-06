@@ -26,12 +26,12 @@
         <div class="card-body">
           <!-- Campo de busca -->
           <div class="form-group">
-            <label for="termoBusca">CPF ou Número SUS</label>
+            <label for="termoBusca">CPF ou Número SES</label>
             <div class="input-group">
               <InputText
                 id="termoBusca"
                 v-model="termoBusca"
-                placeholder="Digite o CPF ou número SUS"
+                placeholder="Digite o CPF ou número SES"
                 class="input-busca"
                 @keyup.enter="buscarPaciente"
               />
@@ -45,7 +45,7 @@
               />
             </div>
             <small class="texto-ajuda">
-              Digite o CPF (11 dígitos) ou o número do cartão SUS (15 dígitos)
+              Digite o CPF (11 dígitos) ou o número do cartão SES (15 dígitos)
             </small>
           </div>
 
@@ -83,8 +83,8 @@
                   <span class="valor">{{ formatarCpf(pacienteEncontrado.document) }}</span>
                 </div>
                 <div class="info-item">
-                  <span class="label">Número SUS:</span>
-                  <span class="valor">{{ pacienteEncontrado.susNumber || 'Não informado' }}</span>
+                  <span class="label">Número SES:</span>
+                  <span class="valor">{{ pacienteEncontrado.sesNumber || 'Não informado' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="label">E-mail:</span>
@@ -134,7 +134,7 @@ const erro = ref('');
 // Métodos
 const buscarPaciente = async () => {
   if (!termoBusca.value || termoBusca.value.trim().length < 11) {
-    erro.value = 'Digite um CPF ou número SUS válido (mínimo 11 caracteres)';
+    erro.value = 'Digite um CPF ou número SES válido (mínimo 11 caracteres)';
     return;
   }
 
