@@ -49,13 +49,13 @@ router.patch('/user/update-password',
 
 router.get('/users/document/:document',
     authenticateToken,
-    authorize(['medico']),
-    UserController.findUserByDocument
+    authorize(['medico', 'tecnico']),
+    UserController.findUserBySesNumber
 );
 
 router.post('/exams',
     authenticateToken,
-    authorize(['tecnico', 'admin', 'medico']),
+    authorize(['tecnico', 'admin']),
     ExamController.createExam
 );
 router.get('/exams/all',
@@ -76,7 +76,7 @@ router.get('/exams/patient/:patientId',
 
 router.get('/exam-types',
     authenticateToken,
-    authorize(['medico']),
+    authorize(['medico', 'tecnico']),
     ExamController.listExamTypes
 )
 
