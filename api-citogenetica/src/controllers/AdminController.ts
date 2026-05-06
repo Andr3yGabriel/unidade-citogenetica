@@ -4,7 +4,7 @@ import UserRepository from '../repositories/UserRepository';
 class AdminController {
     static async workerRegister(req: Request, res: Response): Promise<void> {
         try {
-            const { completeName, password, email, document, userTypeId } = req.body;
+            const { completeName, password, email, sesNumber, userTypeId } = req.body;
 
             const userType = await UserRepository.findUserTypeById(userTypeId);
             if (!userType || userType.name === 'paciente') {
@@ -18,7 +18,7 @@ class AdminController {
                 return;
             }
 
-            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, document, userTypeId });
+            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, sesNumber, userTypeId });
             res.status(201).json({ message: 'Funcionário registrado com sucesso!', user: newUser });
         } catch (error: any) {
             res.status(500).json({ message: 'Erro inesperado ao registrar funcionário.', error: error.message });

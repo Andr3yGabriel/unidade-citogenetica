@@ -7,7 +7,7 @@ import crypto from 'crypto';
 class AuthController {
     static async patientRegister(req: Request, res: Response): Promise<void> {
         try {
-            const { completeName, password, email, document } = req.body;
+            const { completeName, password, email, sesNumber } = req.body;
             const userType = await UserRepository.findUserTypeByName('paciente');
             if (!userType) {
                 res.status(500).json({ message: 'Tipo de usuário "paciente" não encontrado.' });
@@ -20,7 +20,7 @@ class AuthController {
                 return;
             }
 
-            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, document, userTypeId: userType.id });
+            const newUser = await UserRepository.createUser({ completeName, password_hash: password, email, sesNumber, userTypeId: userType.id });
             res.status(201).json({ message: 'Paciente registrado com sucesso!' });
         } catch (error: any) {
             res.status(500).json({ message: 'Erro inesperado ao registrar paciente.', error: error.message });
@@ -29,8 +29,8 @@ class AuthController {
 
     static async login(req: Request, res: Response): Promise<void> {
         try {
-            const { document, password } = req.body;
-            const user = await UserRepository.findUserByDocument(document);
+            const { sesNumber, password } = req.body;
+            const user = await UserRepository.findUserBySesNumber(sesNumber);
 
             if (!user || !(await user.validatePassword(password))) {
                 res.status(401).json({ message: 'Credenciais inválidas.' });

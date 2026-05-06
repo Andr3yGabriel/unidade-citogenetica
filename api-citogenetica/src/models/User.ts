@@ -6,7 +6,7 @@ export interface UserAttributes {
     id: number;
     completeName: string;
     email: string;
-    document: string;
+    sesNumber: string;
     password_hash: string;
     userTypeId: number;
     passwordResetToken?: string | null;
@@ -22,7 +22,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public id!: number;
     public completeName!: string;
     public email!: string;
-    public document!: string;
+    public sesNumber!: string;
     public password_hash!: string;
     public userTypeId!: number;
     public passwordResetToken?: string;
@@ -59,9 +59,9 @@ User.init({
             isEmail: true
         }
     },
-    document: {
-        field: 'documento',
-        type: DataTypes.STRING(11),
+    sesNumber: {
+        field: "numero_ses",
+        type: DataTypes.STRING(255),
         allowNull: false,
         unique: true
     },

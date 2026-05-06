@@ -6,7 +6,7 @@ interface UserCreationData {
     completeName: string;
     password_hash: string;
     email: string;
-    document: string;
+    sesNumber: string;
     userTypeId: number;
     passwordResetToken?: string;
     passwordResetExpires?: Date;
@@ -28,9 +28,9 @@ class UserRepository {
         return userType;
     }
 
-    async findUserByDocument(document: string): Promise<User | null> {
+    async findUserBySesNumber(sesNumber: string): Promise<User | null> {
         const user = await User.findOne({
-            where: { document },
+            where: { sesNumber },
             include: [{ model: UserType, as: 'userType', attributes: ['name'] }]
         });
         return user;

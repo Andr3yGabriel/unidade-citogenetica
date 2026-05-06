@@ -13,16 +13,16 @@ class PacienteRepository {
   }
 
   /**
-   * Busca paciente por número SUS (campo 'susNumber' no banco)
+   * Busca paciente por número SES (campo 'sesNumber' no banco)
    */
   async buscarPorNumeroSus(numeroSus) {
     return await User.findOne({
-      where: { susNumber: numeroSus }
+      where: { sesNumber: numeroSus }
     });
   }
 
   /**
-   * Busca unificada: aceita CPF ou número SUS no mesmo campo
+   * Busca unificada: aceita CPF ou número SES no mesmo campo
    */
   async buscarPorCpfOuSus(termo) {
     const termoLimpo = termo.replace(/[.\-]/g, '');
@@ -31,7 +31,7 @@ class PacienteRepository {
       where: {
         [Op.or]: [
           { document: termoLimpo },
-          { susNumber: termoLimpo }
+          { sesNumber: termoLimpo }
         ]
       }
     });

@@ -30,10 +30,10 @@ class UserController {
         }
     }
 
-    static async findUserByDocument(req: Request, res: Response): Promise<void> {
+    static async findUserBySesNumber(req: Request, res: Response): Promise<void> {
         try {
             const { document } = req.params;
-            const user = await UserRepository.findUserByDocument(document);
+            const user = await UserRepository.findUserBySesNumber(document);
 
             if (!user) {
                 res.status(404).json({ message: 'Usuário não encontrado.' });
