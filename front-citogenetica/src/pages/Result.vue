@@ -36,9 +36,6 @@ export default defineComponent({
 
             try {
                 const response = await apiClient.get(`/reports/download/${examId}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    },
                     responseType: 'blob'
                 });
 

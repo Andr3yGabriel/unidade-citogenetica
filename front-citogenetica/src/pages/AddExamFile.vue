@@ -51,12 +51,7 @@ export default defineComponent({
             formData.append('laudoFile', file.value);
 
             try {
-                const response = await apiClient.post(`/reports/upload/${examId}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-                });
+                const response = await apiClient.post(`/reports/upload/${examId}`, formData);
 
                 if (response.status === 200) {
                     toast.add({

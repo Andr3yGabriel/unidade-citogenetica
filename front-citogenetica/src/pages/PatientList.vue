@@ -54,11 +54,7 @@ export default defineComponent({
         return;
       }
       try {
-        const response = await apiClient.get<ApiPatientExamResponse[]>(`/exams/patient/${localStorage.getItem("userId")}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiClient.get<ApiPatientExamResponse[]>(`/exams/patient/${localStorage.getItem("userId")}`);
 
         exams.value = response.data.map((exam: ApiPatientExamResponse) => ({
           id: exam.id,

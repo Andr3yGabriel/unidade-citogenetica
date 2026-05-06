@@ -51,11 +51,7 @@ export default defineComponent({
       }
 
       try {
-        const response = await apiClient.get<ApiWorkerResponse[]>('/admin/workers', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await apiClient.get<ApiWorkerResponse[]>('/admin/workers');
 
         workers.value = response.data.map((worker: ApiWorkerResponse) => ({
           id: worker.id,
@@ -91,11 +87,7 @@ export default defineComponent({
       const url = `/admin/workers/${action}/${workerId}`;
 
       try {
-        await apiClient.patch(url, {}, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        await apiClient.patch(url, {});
 
         const message = `Funcionário ${isActivating.value ? 'ativado' : 'inativado'} com sucesso.`;
         toast.add({ severity: "success", summary: "Sucesso", detail: message });

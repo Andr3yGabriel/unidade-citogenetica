@@ -30,11 +30,7 @@ export default defineComponent({
 
         const fetchExamTypes = async () => {
             try {
-                const response = await apiClient.get<ExamType[]>('/exam-types', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-                });
+                const response = await apiClient.get<ExamType[]>('/exam-types');
                 examTypes.value = response.data;
             } catch (error) {
                 toast.add({
@@ -58,11 +54,7 @@ export default defineComponent({
             }
 
             try {
-                const patientResponse = await apiClient.get(`/users/document/${patientDocument.value}`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
-                });
+                const patientResponse = await apiClient.get(`/users/document/${patientDocument.value}`);
 
                 const patientId = patientResponse.data.id;
                 const requestingDoctorId = Number(localStorage.getItem('userId'));
@@ -71,10 +63,6 @@ export default defineComponent({
                     patientId,
                     requestingDoctorId,
                     examTypeId: selectedExamType.value
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
                 });
 
                 toast.add({

@@ -56,11 +56,7 @@ export default defineComponent({
       }
 
       try {
-        const response = await apiClient.get<ApiExamResponse[]>('/exams/all', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await apiClient.get<ApiExamResponse[]>('/exams/all');
 
         exams.value = response.data.map((exam: ApiExamResponse) => ({
           id: exam.id,
