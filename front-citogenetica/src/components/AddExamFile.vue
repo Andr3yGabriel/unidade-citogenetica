@@ -39,10 +39,9 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const router = useRouter();
-        const token = localStorage.getItem("token") || "";
         const userId = localStorage.getItem("userId") || "";
         const examId = localStorage.getItem("selectedExamId") || "";
-        
+
         const file = ref<File | null>(null);
         const uploading = ref(false);
         const loading = ref(true);
@@ -53,9 +52,7 @@ export default defineComponent({
 
         const fetchUserInfo = async () => {
             try {
-                const response = await apiClient.get(`/users/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await apiClient.get(`/users/${userId}`);
                 userName.value = response.data.completeName || response.data.email || "Técnico";
             } catch (error) {
                 console.error("Erro ao buscar info do usuário:", error);
@@ -65,16 +62,15 @@ export default defineComponent({
 
         const fetchExamData = async () => {
             try {
-                const response = await apiClient.get(`/exams/${examId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await apiClient.get(`/exams/${examId}`);
                 examData.value = response.data;
             } catch (error: any) {
                 console.error("Erro ao buscar dados do exame:", error);
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Não foi possível carregar os dados do exame."
+                    detail: "Não foi possível carregar os dados do exame.",
+                    life: 3000
                 });
                 router.push("/AllExamsList");
             } finally {
@@ -87,7 +83,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Nenhum exame selecionado!"
+                    detail: "Nenhum exame selecionado!",
+                    life: 3000
                 });
                 router.push("/AllExamsList");
                 return;
@@ -118,7 +115,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: "Por favor, selecione um arquivo PDF."
+                    detail: "Por favor, selecione um arquivo PDF.",
+                    life: 3000
                 });
                 return;
             }
@@ -129,20 +127,16 @@ export default defineComponent({
                 const formData = new FormData();
                 formData.append('laudoFile', file.value);
 
-                const response = await apiClient.post(`/reports/upload/${examId}`, formData, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
+                const response = await apiClient.post(`/reports/upload/${examId}`, formData);
 
                 if (response.status === 200) {
                     toast.add({
                         severity: "success",
                         summary: "Sucesso",
-                        detail: "Laudo enviado com sucesso!"
+                        detail: "Laudo enviado com sucesso!",
+                        life: 3000
                     });
-                    
+
                     setTimeout(() => {
                         router.push("/AllExamsList");
                     }, 1000);
@@ -153,7 +147,8 @@ export default defineComponent({
                 toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: message
+                    detail: message,
+                    life: 3000
                 });
             } finally {
                 uploading.value = false;
@@ -173,13 +168,16 @@ export default defineComponent({
         };
 
         const logout = () => {
-            localStorage.clear();
-            toast.add({ 
-                severity: "success", 
-                summary: "Logout realizado", 
-                detail: "Você foi desconectado com sucesso.", life: 3000, life: 3000 
+            localStorage.removeItem("token");
+            localStorage.removeItem("userType");
+            localStorage.removeItem("userId");
+            toast.add({
+                severity: "success",
+                summary: "Logout realizado",
+                detail: "Você foi desconectado com sucesso.",
+                life: 3000
             });
-            router.push("/login");
+            router.push("/Login");
         };
 
         return {
@@ -205,23 +203,28 @@ export default defineComponent({
 
 <template>
     <Toast position="top-right" />
-    
+
     <!-- Navbar -->
     <nav class="navbar">
-      <a @click="goToHome" style="cursor: pointer;">
-        <img
-          src="../assets/logo-unidade.jpg"
-          alt="Logo da unidade genética"
-          class="logo"
-        />
+      <a @click="goToHome" class="logo-link">
+        <span class="logo-letter">S</span>
+        <svg class="logo-dna" viewBox="0 0 20 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4,1 C4,8 16,13 16,20 C16,27 4,32 4,39" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M16,1 C16,8 4,13 4,20 C4,27 16,32 16,39" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="3" y1="1" x2="17" y2="1" stroke="white" stroke-width="2"/>
+          <line x1="15" y1="14" x2="5" y2="14" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/>
+          <line x1="5" y1="26" x2="15" y2="26" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/>
+          <line x1="3" y1="39" x2="17" y2="39" stroke="white" stroke-width="2"/>
+        </svg>
+        <span class="logo-letter">SUGEN</span>
       </a>
-      
+
       <!-- Dropdown de Perfil -->
       <div class="user-menu-wrapper">
         <button @click="toggleDropdown" class="user-button">
           <ion-icon name="person-circle-outline" class="user-profile"></ion-icon>
         </button>
-        
+
         <div v-if="showDropdown" class="dropdown-menu">
           <div class="dropdown-header">
             <div class="user-info">
@@ -265,7 +268,7 @@ export default defineComponent({
               <i class="pi pi-info-circle"></i>
               <h3>Informações do Exame</h3>
             </div>
-            
+
             <div class="info-grid">
               <div class="info-item">
                 <label>Paciente:</label>
@@ -317,11 +320,11 @@ export default defineComponent({
                   <i class="pi pi-file-pdf"></i>
                   Arquivo do Laudo (PDF)
                 </label>
-                <FileUpload 
-                  id="arquivo" 
-                  mode="basic" 
-                  name="laudoFile" 
-                  accept="application/pdf" 
+                <FileUpload
+                  id="arquivo"
+                  mode="basic"
+                  name="laudoFile"
+                  accept="application/pdf"
                   :maxFileSize="10000000"
                   chooseLabel="Selecionar PDF"
                   @select="handleFileUpload"
@@ -335,17 +338,17 @@ export default defineComponent({
               </div>
 
               <div class="button-group">
-                <Button 
-                  type="submit" 
-                  label="Enviar Laudo" 
+                <Button
+                  type="submit"
+                  label="Enviar Laudo"
                   icon="pi pi-upload"
                   :loading="uploading"
                   :disabled="!file || uploading"
                   class="p-button-success"
                 />
-                <Button 
-                  type="button" 
-                  label="Cancelar" 
+                <Button
+                  type="button"
+                  label="Cancelar"
                   icon="pi pi-times"
                   class="p-button-secondary"
                   @click="handleCancel"
@@ -360,7 +363,6 @@ export default defineComponent({
 </template>
 
 <style scoped>
-/* Navbar (igual aos outros) */
 .navbar {
   display: flex;
   padding: 10px 20px;
@@ -372,10 +374,26 @@ export default defineComponent({
   z-index: 100;
 }
 
-.logo {
-  width: 190px;
-  height: 100px;
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  text-decoration: none;
   cursor: pointer;
+}
+
+.logo-letter {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.logo-dna {
+  width: 16px;
+  height: 32px;
+  margin: 0 2px;
 }
 
 .user-menu-wrapper {
@@ -416,14 +434,8 @@ export default defineComponent({
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown-header {
@@ -441,20 +453,9 @@ export default defineComponent({
   margin-bottom: 0.5rem;
 }
 
-.user-role {
-  margin-bottom: 0;
-  opacity: 0.9;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.user-info i,
-.user-role i {
-  font-size: 1.1rem;
-}
+.user-role { margin-bottom: 0; opacity: 0.9; }
+.user-name { font-weight: 600; font-size: 1rem; }
+.user-info i, .user-role i { font-size: 1.1rem; }
 
 .dropdown-divider {
   height: 1px;
@@ -476,19 +477,10 @@ export default defineComponent({
   border-radius: 0 0 8px 8px;
 }
 
-.dropdown-item:hover {
-  background: #f3f4f6;
-}
+.dropdown-item:hover { background: #f3f4f6; }
+.dropdown-item.logout { color: #dc2626; }
+.dropdown-item i { font-size: 1.1rem; }
 
-.dropdown-item.logout {
-  color: #dc2626;
-}
-
-.dropdown-item i {
-  font-size: 1.1rem;
-}
-
-/* Container Principal */
 .page-container {
   min-height: calc(100vh - 120px);
   background-color: #f8fafc;
@@ -500,7 +492,6 @@ export default defineComponent({
   margin: 0 auto;
 }
 
-/* Loading */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -510,30 +501,12 @@ export default defineComponent({
   gap: 1rem;
 }
 
-.loading-container p {
-  color: #64748b;
-  font-size: 1.125rem;
-}
+.loading-container p { color: #64748b; font-size: 1.125rem; }
 
-/* Header */
-.page-header {
-  margin-bottom: 2rem;
-}
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { color: #1e293b; font-size: 2rem; font-weight: 600; margin: 0 0 0.5rem 0; }
+.subtitle { color: #64748b; font-size: 1rem; margin: 0; }
 
-.page-header h1 {
-  color: #1e293b;
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-}
-
-.subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin: 0;
-}
-
-/* Info Card */
 .info-card {
   background: white;
   border-radius: 12px;
@@ -551,17 +524,8 @@ export default defineComponent({
   border-bottom: 2px solid #e5e7eb;
 }
 
-.info-header i {
-  font-size: 1.5rem;
-  color: #0062ae;
-}
-
-.info-header h3 {
-  color: #1e293b;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-}
+.info-header i { font-size: 1.5rem; color: #0062ae; }
+.info-header h3 { color: #1e293b; font-size: 1.25rem; font-weight: 600; margin: 0; }
 
 .info-grid {
   display: grid;
@@ -569,25 +533,9 @@ export default defineComponent({
   gap: 1.5rem;
 }
 
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.info-item label {
-  font-weight: 600;
-  color: #64748b;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  color: #1e293b;
-  font-size: 1rem;
-  font-weight: 500;
-}
+.info-item { display: flex; flex-direction: column; gap: 0.5rem; }
+.info-item label { font-weight: 600; color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.info-value { color: #1e293b; font-size: 1rem; font-weight: 500; }
 
 .status-badge {
   display: inline-block;
@@ -600,7 +548,6 @@ export default defineComponent({
   width: fit-content;
 }
 
-/* Upload Card */
 .upload-card {
   background: white;
   border-radius: 12px;
@@ -608,9 +555,7 @@ export default defineComponent({
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.form-group {
-  margin-bottom: 2rem;
-}
+.form-group { margin-bottom: 2rem; }
 
 .form-group label {
   display: flex;
@@ -622,10 +567,7 @@ export default defineComponent({
   margin-bottom: 1rem;
 }
 
-.form-group label i {
-  color: #dc2626;
-  font-size: 1.25rem;
-}
+.form-group label i { color: #dc2626; font-size: 1.25rem; }
 
 .file-info {
   display: flex;
@@ -636,9 +578,7 @@ export default defineComponent({
   margin-top: 0.75rem;
 }
 
-.file-info i {
-  color: #3b82f6;
-}
+.file-info i { color: #3b82f6; }
 
 :deep(.file-upload-custom .p-fileupload-choose) {
   background: #3b82f6;
@@ -658,49 +598,17 @@ export default defineComponent({
   justify-content: flex-end;
 }
 
-/* Responsivo */
 @media (max-width: 768px) {
-  .navbar {
-    padding: 10px;
-  }
-
-  .logo {
-    width: 150px;
-    height: 80px;
-  }
-
-  .user-profile {
-    height: 40px;
-    width: 40px;
-  }
-
-  .dropdown-menu {
-    right: -10px;
-  }
-
-  .page-container {
-    padding: 1rem 0.5rem;
-  }
-
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .info-card,
-  .upload-card {
-    padding: 1.5rem;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .button-group {
-    flex-direction: column;
-  }
-
-  .button-group button {
-    width: 100%;
-  }
+  .navbar { padding: 10px; }
+  .logo-letter { font-size: 1.5rem; }
+  .logo-dna { width: 12px; height: 24px; }
+  .user-profile { height: 40px; width: 40px; }
+  .dropdown-menu { right: -10px; }
+  .page-container { padding: 1rem 0.5rem; }
+  .page-header h1 { font-size: 1.5rem; }
+  .info-card, .upload-card { padding: 1.5rem; }
+  .info-grid { grid-template-columns: 1fr; }
+  .button-group { flex-direction: column; }
+  .button-group button { width: 100%; }
 }
 </style>
